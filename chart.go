@@ -1,7 +1,7 @@
 // Package chart generates interactive svg charts from time series data.
 // It currently generates one single chart with one or more datasets
 // of 720 or 1440 point each. Other sizes are not supported at this time.
-// The caller is reponsible to interpolate the source data and supply
+// The caller is responsible to interpolate the source data and supply
 // an array of 720 or 1440 points.
 //
 // Example
