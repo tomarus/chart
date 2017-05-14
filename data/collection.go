@@ -9,11 +9,21 @@ func (c Collection) Normalize(limit int) {
 		c[n].normalize(limit)
 	}
 
-	max := getMax(c)
-
+	max := c.max()
 	for i := range c {
 		c[i].normalizeMax(limit, max)
 	}
+}
+
+// max returns the max value of a Collection.
+func (c Collection) max() float64 {
+	max := 0.
+	for i := range c {
+		if max < c[i].Max {
+			max = c[i].Max
+		}
+	}
+	return max
 }
 
 // Implement Sort interface

@@ -20,7 +20,7 @@ func seq(a, b []string) bool {
 }
 
 var labelChart = Chart{
-	data: []data.Data{
+	data: data.Collection{
 		data.NewData("line", []float64{0, 5}),
 		data.NewData("line", []float64{0, 1, 2, 3, 4, 5}),
 	},

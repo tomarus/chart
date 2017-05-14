@@ -41,14 +41,3 @@ func (d *Data) normalizeMax(height int, max float64) {
 	b2 := fmax - a2*max
 	d.NMax = int(a2*float64(d.Max) + b2)
 }
-
-// getMax returns the max value of a slice of Data.
-func getMax(d []Data) float64 {
-	max := 0.
-	for i := range d {
-		if max < d[i].Max {
-			max = d[i].Max
-		}
-	}
-	return max
-}

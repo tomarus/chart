@@ -92,7 +92,7 @@ func (svg *SVG) Line(color string, x1, y1, x2, y2 int) {
 }
 
 // Legend writes the legend buttons to the bottom.
-func (svg *SVG) Legend(d []data.Data, p *palette.Palette) {
+func (svg *SVG) Legend(d data.Collection, p *palette.Palette) {
 	x := svg.marginx
 	y := svg.height + svg.marginy + 4
 	svg.p(`<g class="legend">`)

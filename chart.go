@@ -58,7 +58,7 @@ type Image interface {
 	ID(id string)
 	EndID()
 	Line(color string, x1, y1, x2, y2 int)
-	Legend([]data.Data, *palette.Palette)
+	Legend(data.Collection, *palette.Palette)
 	Border(x1, y1, x2, y2 int)
 }
 
