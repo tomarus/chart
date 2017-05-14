@@ -77,7 +77,7 @@ type Chart struct {
 // Options defines a type used to initialize a Chart using NewChart()
 type Options struct {
 	Title      string    // guess what, leave empty to hide
-	Size       string    // "small" to create 720px graph, 1400px otherwise
+	Size       string    // "small" to create 720px graph, 1440px otherwise
 	Scheme     string    // palette colorscheme, default "white"
 	Start, End uint64    // start + end epoch of data
 	Xdiv, Ydiv int       // num grid divisions (default x12 y5)
