@@ -28,7 +28,7 @@ function handlemouse() {
 		selmode++
 		if (selmode > 2) { 
 			selmode = 0
-			marker('hidden', 0, 0)
+			markerpos(svg, pt, evt)
 		}
 		selx = loc.x
 		sely = loc.y
@@ -39,16 +39,19 @@ function handlemouse() {
 		evt.preventDefault()
 	})
 	svg.addEventListener('mousemove', function(evt) {
-		pt.x = evt.clientX
-		pt.y = evt.clientY
-		loc = pt.matrixTransform(svg.getScreenCTM().inverse())
-		if (loc.x<mx || loc.x>=w+mx || loc.y<my || loc.y>=h+my) {
-			marker('hidden', 0, 0)
-		} else {
-			marker('visible', loc.x, loc.y)
-		}
-		evt.preventDefault()
+		markerpos(svg, pt, evt)
 	})
+}
+function markerpos(svg, pt,evt) {
+	pt.x = evt.clientX
+	pt.y = evt.clientY
+	loc = pt.matrixTransform(svg.getScreenCTM().inverse())
+	if (loc.x<mx || loc.x>=w+mx || loc.y<my || loc.y>=h+my) {
+		marker('hidden', 0, 0)
+	} else {
+		marker('visible', loc.x, loc.y)
+	}
+	evt.preventDefault()
 }
 function mkvis(v) {
 	mkx2.style.visibility = v
