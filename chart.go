@@ -10,6 +10,7 @@
 //
 // opts := &chart.Options{
 // 	Title:  "Traffic",
+//	Type:   chart.SVG,
 // 	Size:   "big",   // big is 1440px, small is 720px
 // 	Scheme: "white", // or black/random/pink/solarized or hsv:180,0.5,0.25
 // 	Start:  start_epoch,
@@ -41,6 +42,7 @@ import (
 
 	"github.com/tomarus/chart/data"
 	"github.com/tomarus/chart/palette"
+	"github.com/tomarus/chart/png"
 	"github.com/tomarus/chart/svg"
 )
 
@@ -52,14 +54,14 @@ const (
 // Image defines the interface for image (svg/png) backends.
 type Image interface {
 	Start(w, h, mx, my, start, end int, p *palette.Palette)
-	End()
+	End() error
 	Graph(data.Collection)
 	Text(color, align string, x, y int, txt string)
 	ID(id string)
 	EndID()
 	Line(color string, x1, y1, x2, y2 int)
 	Legend(data.Collection, *palette.Palette)
-	Border(x1, y1, x2, y2 int)
+	Border(x, y, w, h int)
 }
 
 // Chart is the main chart type used for all operations.
@@ -89,7 +91,7 @@ type Options struct {
 var DefaultTypes = []string{"area", "area", "line", "line"}
 
 // Render renders the final image to the io.Writer.
-func (c *Chart) Render() {
+func (c *Chart) Render() error {
 	c.data.Normalize(c.height)
 	sort.Sort(c.data)
 	c.scales(c.ydiv)
@@ -100,7 +102,7 @@ func (c *Chart) Render() {
 	c.drawTitle(c.width+c.marginx, c.height)
 	c.image.Legend(c.data, c.palette)
 	c.image.Border(c.marginx-1, c.marginy-1, c.width+1, c.height+1)
-	c.image.End()
+	return c.image.End()
 }
 
 // drawTitle sets the chart title.
@@ -127,6 +129,8 @@ func NewChart(o *Options) (*Chart, error) {
 	switch o.Type {
 	case SVG:
 		img, _ = svg.New(o.W)
+	case PNG:
+		img, _ = png.New(o.W)
 	default:
 		return nil, fmt.Errorf("unsupported format")
 	}

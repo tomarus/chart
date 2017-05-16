@@ -160,6 +160,11 @@ func (p *Palette) GetHexColor(name string) string {
 	return palettes[p.Name][name]
 }
 
+// GetAxisColorName gets the color for the Nth datapoint.
+func (p *Palette) GetAxisColorName(id int) string {
+	return axisColors[id]
+}
+
 // GetHexAxisColor gets the color for the Nth datapoint.
 func (p *Palette) GetHexAxisColor(id int) string {
 	lock.RLock()

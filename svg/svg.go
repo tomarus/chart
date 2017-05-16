@@ -104,12 +104,13 @@ func (svg *SVG) Legend(d data.Collection, p *palette.Palette) {
 	svg.p(`</g>`)
 }
 
-func (svg *SVG) End() {
+func (svg *SVG) End() error {
 	svg.p(`</svg>`)
+	return nil
 }
 
-func (svg *SVG) Border(x1, y1, x2, y2 int) {
-	svg.svgRect(x1, y1, x2, y2, "border")
+func (svg *SVG) Border(x, y, w, h int) {
+	svg.svgRect(x, y, w, h, "border")
 }
 
 func (svg *SVG) svgRect(x, y, w, h int, class string) {

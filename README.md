@@ -3,6 +3,7 @@
 Dead simple rrd like interactive svg graphs with focus on pixel perfect rendering of source data.
 
 Written in Go, the output is a SVG image containing Javascript which does most rendering and selection magic.
+Additionally a static png image can be written.
 
 ## Examples
 
@@ -22,6 +23,7 @@ Example of useless but interesting random colors:
 import "github.com/tomarus/chart"
 opts := &chart.Options{
     Title:  "Traffic",
+    Type:   chart.SVG,
     Size:   "big",   // big is 1440px, small is 720px
     Scheme: "white", // or black/random/pink/solarized or hsv:180,0.5,0.25
     Start:  start_epoch,
@@ -46,7 +48,7 @@ c.Render()
 
 This is an experimental work in progress for educational and research purposes only.
 
-It currently has no Go and no Javascript dependencies. But they will be added eventually probably.
+This project has very few Go dependencies and no Javascript dependencies. Only freetype and image/font is used for png output.
 
 This project has just started and a lot of stuf is still missing or incomplete.
 
@@ -55,4 +57,3 @@ This is a small list of ideas/todos:
 * Flexible graph sizes
 * Bar charts (basically wider area pixels)
 * Custom lines and markers, like 95th percentile line, downtime markers, etc
-* Finish PNG implementation
