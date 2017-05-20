@@ -9,9 +9,9 @@ Additionally a static png image can be written.
 
 Example screenshot:
 
-[View as interactive SVG](http://s.chiparus.org/5/5989676a301be238.svg)
+[View as interactive SVG](http://s.chiparus.org/6/6b15c5349e894fe9.svg)
 
-![Example Screenshot](http://s.chiparus.org/5/5860a66293f1a6f1.png)
+![Example Spngcreenshot](http://s.chiparus.org/5/5caa4e08e4b2edb3.png)
 
 Example of useless but interesting random colors:
 
@@ -24,7 +24,8 @@ import "github.com/tomarus/chart"
 opts := &chart.Options{
     Title:  "Traffic",
     Type:   chart.SVG,
-    Size:   "big",   // big is 1440px, small is 720px
+    Size:   "auto",  // big is 1440px, small is 720px, auto is size of dataset
+    Height: 300,     // Defaults to -1, when size=auto height=width/4, otherwise set fixed height
     Scheme: "white", // or black/random/pink/solarized or hsv:180,0.5,0.25
     Start:  start_epoch,
     End:    end_epoch,
@@ -54,6 +55,5 @@ This project has just started and a lot of stuf is still missing or incomplete.
 
 This is a small list of ideas/todos:
 * Data interpolation (data must match graph size now)
-* Flexible graph sizes
 * Bar charts (basically wider area pixels)
 * Custom lines and markers, like 95th percentile line, downtime markers, etc

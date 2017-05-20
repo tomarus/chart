@@ -11,7 +11,7 @@
 // opts := &chart.Options{
 // 	Title:  "Traffic",
 //	Type:   chart.SVG,
-// 	Size:   "big",   // big is 1440px, small is 720px
+// 	Size:   "big",   // big is 1440px, small is 720px, auto is size of dataset
 // 	Scheme: "white", // or black/random/pink/solarized or hsv:180,0.5,0.25
 // 	Start:  start_epoch,
 // 	End:    end_epoch,
@@ -78,13 +78,14 @@ type Chart struct {
 
 // Options defines a type used to initialize a Chart using NewChart()
 type Options struct {
-	Title      string    // guess what, leave empty to hide
-	Size       string    // "small" to create 720px graph, 1440px otherwise
-	Scheme     string    // palette colorscheme, default "white"
-	Start, End uint64    // start + end epoch of data
-	Xdiv, Ydiv int       // num grid divisions (default x12 y5)
-	Type       int       // chart.SVG (or chart.PNG when finished )
-	W          io.Writer // output writer to write image to
+	Title         string    // guess what, leave empty to hide
+	Size          string    // big is 1440px, small is 720px, auto is size of dataset
+	Width, Height int       // overrides Size
+	Scheme        string    // palette colorscheme, default "white"
+	Start, End    uint64    // start + end epoch of data
+	Xdiv, Ydiv    int       // num grid divisions (default x12 y5)
+	Type          int       // chart.SVG (or chart.PNG when finished )
+	W             io.Writer // output writer to write image to
 }
 
 // DefaultTypes define some default chart types for convenience.
@@ -117,6 +118,13 @@ func (c *Chart) drawTitle(width, height int) {
 // A warning is returned if the graph + data sizes do not match.
 func (c *Chart) AddData(t string, d []float64) error {
 	c.data = append(c.data, data.NewData(t, d))
+	if c.width == -1 {
+		c.width = len(d)
+		if c.height == -1 {
+			c.height = c.width / 4
+		}
+		return nil
+	}
 	if len(d) != c.width {
 		return fmt.Errorf("data length %d does not equal graph size %d", len(d), c.width)
 	}
@@ -137,12 +145,21 @@ func NewChart(o *Options) (*Chart, error) {
 	c := &Chart{title: o.Title, marginx: 48, marginy: 20, image: img}
 
 	// XXX make this flexible
-	if o.Size == "small" {
+	if o.Size == "big" {
+		c.width = 1440
+		c.height = 360
+	} else if o.Size == "small" {
 		c.width = 720
 		c.height = 240
-	} else {
-		c.width = 1440 // w/h of chart container
-		c.height = 360
+	} else { // "auto"
+		c.width = -1
+		c.height = -1
+	}
+	if o.Width > 0 {
+		c.width = o.Width
+	}
+	if o.Height > 0 {
+		c.height = o.Height
 	}
 
 	c.xdiv = 12

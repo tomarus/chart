@@ -99,9 +99,9 @@ function marker(s, x, y) {
 	if (selmode) {
 		let v2 = data[active||0].fmax / h * dy
 		let t = (end-start) / w * dx / 1000
-		seltxt += ' Range: ' + fmtime(t) + ' Delta-Y: ' + fmt(Math.abs(v2))
+		seltxt += ' Len: ' + fmtime(t) + ' Delta-Y: ' + fmt(Math.abs(v2))
 	} else {
-	 	seltxt += ' Value:' + fmt(v)
+		seltxt += ' Y:' + fmt(v)
 	}
 }
 function status() {

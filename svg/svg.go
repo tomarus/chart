@@ -40,9 +40,9 @@ func (svg *SVG) Graph(d data.Collection) {
 	svg.p(`<defs>`)
 
 	svg.p(`<script type="text/javascript"><![CDATA[`)
-	svg.p("let w=%d,h=%d,mx=%d,my=%d,start=%d,end=%d", svg.width, svg.height, svg.marginx, svg.marginy, svg.start, svg.end)
+	svg.p("const w=%d,h=%d,mx=%d,my=%d,start=%d,end=%d", svg.width, svg.height, svg.marginx, svg.marginy, svg.start, svg.end)
 	jsdata, _ := json.Marshal(d)
-	svg.p("let data=" + string(jsdata))
+	svg.p("const data=" + string(jsdata))
 	fmt.Fprint(svg.w, js)
 	svg.p("]]></script>")
 
