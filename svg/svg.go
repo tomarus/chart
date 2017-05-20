@@ -64,6 +64,21 @@ func (svg *SVG) Graph(d data.Collection) {
 	svg.p(`<line id="markery2" x1="%d" x2="%d" y1="0" y2="0" class="marker" style="visibility:hidden"/>`, svg.marginx, svg.width+svg.marginx)
 	svg.p(`<rect id="markersel" x="0" y="0" width="0" height="0" class="" style='fill-opacity:.5;fill:%s'/>`, svg.pal.GetHexColor("select"))
 	svg.p(`<text class="title" id="markertext" x="%d" y="%d" />`, svg.marginx, svg.marginy/2+4)
+
+	svg.drawMA()
+}
+
+func (svg *SVG) drawMA() {
+	const maColor = "color2"
+	fmt.Fprintln(svg.w, `<defs>`)
+	svg.p(`<g id="ma">`)
+	svg.p(`<path style="fill: none; stroke: %s; stroke-width: 2; shape-rendering: auto" d="M0,0"/>`, svg.pal.GetHexColor(maColor))
+	svg.p(`</g>`)
+	fmt.Fprintln(svg.w, `</defs>`)
+	svg.p(`<use x="%d" y="%d" xlink:href="#ma"/>`, svg.marginx, svg.marginy)
+
+	y := svg.height + svg.marginy + 4
+	svg.p(`<rect id="mabut" x="%d" y="%d" width="12" height="12" style="visibility:normal;fill:%s"/>`, svg.width+svg.marginx-12, y, svg.pal.GetHexColor(maColor))
 }
 
 func (svg *SVG) Text(color, align string, x, y int, txt string) {

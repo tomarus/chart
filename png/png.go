@@ -43,7 +43,6 @@ func (png *PNG) Start(w, h, mx, my, start, end int, p *palette.Palette) {
 
 	bg := image.NewUniform(p.GetColor("background"))
 	draw.Draw(png.img, png.img.Bounds(), bg, image.ZP, draw.Src)
-
 }
 
 func (png *PNG) End() error {

@@ -1,8 +1,7 @@
 package svg
 
 const js = `
-let active, mkx, mkx2, mky, mky2, mks, mkt, loc, selx, sely
-let selmode = 0
+let active, mkx, mkx2, mky, mky2, mks, mkt, loc, selx, sely, seltxt="", mavtxt="", mav=0, selmode=0
 let dopt = {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false}
 window.onload = init
 document.addEventListener('load', init)
@@ -10,8 +9,9 @@ function id(n) { return 'path'+(n+1) }
 function idb(n) { return 'path'+(n+1)+'_b' }
 function init() {
 	data.forEach((d, i) => {
-		document.getElementById(idb(i)).onclick = () => { click(i) }
+		document.getElementById(idb(i)).onclick = () => { click(i); selmode = 0 }
 	})
+	document.getElementById('mabut').onclick = () => { maclick(); selmode = 0 }
 	render(0)
 	mkx = document.getElementById('markerx')
 	mky = document.getElementById('markery')
@@ -51,6 +51,7 @@ function markerpos(svg, pt,evt) {
 	} else {
 		marker('visible', loc.x, loc.y)
 	}
+	status()
 	evt.preventDefault()
 }
 function mkvis(v) {
@@ -64,9 +65,9 @@ function marker(s, x, y) {
 	}
 	mkx.style.visibility = s
 	mky.style.visibility = s
-	mkt.style.visibility = s
 	mkvis(selmode?s:'hidden')
 	if (s!=='visible') {
+		seltxt = ""
 		return
 	}
 	let sx, sy, dx, dy
@@ -93,16 +94,18 @@ function marker(s, x, y) {
 	let px = x-mx
 	let py = y-my
 	let v = data[active||0].fmax - data[active||0].fmax / h * py
-	let d = new Date((end - start) / w * Math.min(px, selx||0) + start)
-	let sel = d.toLocaleTimeString('nl-NL', dopt)
+	let d = new Date((end - start) / w * Math.min(px, selx-mx||0) + start)
+	seltxt = d.toLocaleTimeString('nl-NL', dopt)
 	if (selmode) {
 		let v2 = data[active||0].fmax / h * dy
 		let t = (end-start) / w * dx / 1000
-		sel += ' Range: ' + fmtime(t) + ' Delta-Y: ' + fmt(Math.abs(v2))
+		seltxt += ' Range: ' + fmtime(t) + ' Delta-Y: ' + fmt(Math.abs(v2))
 	} else {
-	 	sel += ' Value:' + fmt(v)
+	 	seltxt += ' Value:' + fmt(v)
 	}
-	mkt.innerHTML = sel
+}
+function status() {
+	mkt.innerHTML = seltxt + (mavtxt !== "" ? " " + mavtxt : "")
 }
 function fmt(b) {
 	if (b < 1000000) return b.toFixed()
@@ -153,6 +156,7 @@ function render(n) {
 	data.forEach((d, i) => {
 		window[data[i].type](i, h, i === n ? h : data[i].max)
 	})
+	ma(n)
 }
 function area(n, max, fmax) {
 	graph('area', '', n, max, fmax)
@@ -171,5 +175,69 @@ function graph(t, p, n, max, fmax) {
 		}
 	}
 	document.getElementById(id(n)).firstElementChild.setAttribute('d', p)
+}
+function valof(n, pos, off, max) {
+	if (pos+off<0 || pos+off>=max) {
+		return -1
+	}
+	return data[n].values[pos+off]
+}
+function findma(n, pos, size) {
+	if (size == w) {
+		let v = 0
+		for (let j=0; j<size; j++) {
+			v += data[n].values[j]
+		}
+		return v/size
+	}
+	let v = data[n].values[pos]
+	let dx = data[n].values.length
+	let totw = 0
+	for (let j=0; j<size; j++) {
+		let q = valof(n, pos, j+1, dx)
+		let wx = size-j-1
+		if (q!==-1) {
+			totw += wx
+			v += q * wx
+		}
+		q = valof(n, pos, -j-1, dx)
+		if (q!==-1) {
+			totw += wx
+			v += q * wx
+		}
+	}
+	v /= totw+1
+	return v
+}
+function ma(n) {
+	if (mav===0) {
+		document.getElementById('ma').firstElementChild.setAttribute('d', 'M0,0')
+		return
+	}
+	let max = h
+	let fmax = h
+	let smooth = 1<<mav
+	if (smooth>w) {
+		smooth = w
+	}
+	let v0 = norm(findma(n, 0, smooth), max, fmax)
+	let p = 'M0,'+(h-v0)
+	for (let i=0; i<Math.min(w, data[n].values.length); i++) {
+		let v = norm(findma(n, i, smooth), max, fmax)
+		p += 'L'+i+','+(h-v)
+	}
+	document.getElementById('ma').firstElementChild.setAttribute('d', p)
+}
+function maclick() {
+	if (mav === w || 1<<mav > w) {
+		mav = -1
+	}
+	mav++
+	ma(active||0)
+	mavtxt = ""
+	if (mav>0) {
+		mavtxt = "WMA:" + (1<<mav)
+	}
+	status()
 }
 `
