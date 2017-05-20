@@ -183,27 +183,31 @@ function valof(n, pos, off, max) {
 	return data[n].values[pos+off]
 }
 function findma(n, pos, size) {
+	const minValue = 1
 	if (size == w) {
-		let v = 0
+		let v = 0, tw = 0
 		for (let j=0; j<size; j++) {
-			v += data[n].values[j]
+			if (data[n].values[j]>=minValue) {
+				v += data[n].values[j]
+				tw++
+			}
 		}
-		return v/size
+		return v/tw
 	}
 	let v = data[n].values[pos]
 	let dx = data[n].values.length
 	let totw = 0
 	for (let j=0; j<size; j++) {
-		let q = valof(n, pos, j+1, dx)
 		let wx = size-j-1
-		if (q!==-1) {
+		let q = valof(n, pos, j+1, dx)
+		if (q>=minValue) {
 			totw += wx
-			v += q * wx
+			v += q*wx
 		}
 		q = valof(n, pos, -j-1, dx)
-		if (q!==-1) {
+		if (q>=minValue) {
 			totw += wx
-			v += q * wx
+			v += q*wx
 		}
 	}
 	v /= totw+1
@@ -236,7 +240,7 @@ function maclick() {
 	ma(active||0)
 	mavtxt = ""
 	if (mav>0) {
-		mavtxt = "WMA:" + (1<<mav)
+		mavtxt = "WMA:" + (1<<mav > w ? "all" : 1<<mav)
 	}
 	status()
 }
