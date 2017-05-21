@@ -81,23 +81,33 @@ func init() {
 func mkrandom(key string, r bool, hue, sat, val float64) {
 	if r {
 		hue = rand.Float64() * 360
-		sat = rand.Float64()
+		sat = rand.Float64()/2 + .5
 	}
+
+	c := make([]*color.RGBA, 8)
+	c[0] = NewHSL(hue, 0.15*sat, 0.1*val).RGBA()
+	c[1] = NewHSL(hue, 0.01*sat, 0.3*val).RGBA() // XXX this should have alpha
+	c[2] = NewHSL(hue, 0.05*sat, 0.9*val).RGBA()
+	c[3] = NewHSL(hue, 0.5*sat, 0.8*val).RGBA()
+	c[4] = NewHSL(hue, 0.5*sat, 0.45*val).RGBA()
+	c[5] = NewHSL(hue, 0.5*sat, 0.66*val).RGBA()
+	c[6] = NewHSL(hue, 0.5*sat, 0.8*val).RGBA()
+	c[7] = NewHSL(hue+180, 0.5*sat, 0.75*val).RGBA()
+
 	lock.Lock()
 	defer lock.Unlock()
 	palettes[key] = map[string]string{
-		"background": col2hex(NewHSL(hue, sat/3, val/6).RGBA()),
-		"title":      col2hex(NewHSL(hue, 0, val).RGBA()),
-		"grid":       col2hex(NewHSL(hue, 0, val/2).RGBA()),
-		"border":     col2hex(NewHSL(hue, 0, val/2).RGBA()),
-		"marker":     col2hex(NewHSL(hue, sat/4, val/1.5).RGBA()),
-		"select":     col2hex(NewHSL(hue, sat/3, val/2).RGBA()),
-		"area":       col2hex(NewHSL(hue, sat, val/4*2).RGBA()),
-		"color1":     col2hex(NewHSL(hue+120, sat, val/4*2).RGBA()),
-		"color2":     col2hex(NewHSL(hue+240, sat, val/4*2).RGBA()),
-		"color3":     col2hex(NewHSL(hue+120, sat, val/4*2).RGBA()),
+		"background": col2hex(c[0]),
+		"title":      col2hex(c[2]),
+		"grid":       col2hex(c[1]),
+		"border":     col2hex(c[1]),
+		"marker":     col2hex(c[3]),
+		"select":     col2hex(c[3]),
+		"area":       col2hex(c[4]),
+		"color1":     col2hex(c[5]),
+		"color2":     col2hex(c[6]),
+		"color3":     col2hex(c[7]),
 	}
-
 }
 
 var mx1 = regexp.MustCompile("hsl:([0-9.]+),([0-9.]+),([0-9.]+)")

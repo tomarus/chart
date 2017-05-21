@@ -69,7 +69,7 @@ func (svg *SVG) Graph(d data.Collection) {
 }
 
 func (svg *SVG) drawMA() {
-	const maColor = "color2"
+	const maColor = "color3"
 	fmt.Fprintln(svg.w, `<defs>`)
 	svg.p(`<g id="ma">`)
 	svg.p(`<path style="fill: none; stroke: %s; stroke-width: 2; shape-rendering: auto" d="M0,0"/>`, svg.pal.GetHexColor(maColor))
@@ -139,9 +139,8 @@ func (svg *SVG) svgHead(w, h int) {
 
 func (svg *SVG) svgCSS(p *palette.Palette) {
 	svg.p(`<defs><style type="text/css"><![CDATA[`)
-	svg.p(".grid { fill: %s; stroke-width: 0; font-size: 11px; font-family: menlo }", p.GetHexColor("title"))
-	svg.p(".gridlines { stroke: %s; stroke-opacity: .62; stroke-dasharray: 1; stroke-width: 0.25 }", p.GetHexColor("grid"))
-	svg.p(".title { fill: %s; font-size: 12px; font-family: menlo; fill-opacity:1; stroke-width: 0 }", p.GetHexColor("title"))
+	svg.p(".grid { stroke: %s; stroke-opacity: .62; stroke-dasharray: 1; stroke-width: 0.25 }", p.GetHexColor("grid"))
+	svg.p(".title { fill: %s; font-size: 11px; font-family: menlo; fill-opacity:1; stroke-width: 0 }", p.GetHexColor("title"))
 	svg.p(".border { stroke: %s; stroke-opacity: 1; stroke-width: 1; fill: none }", p.GetHexColor("border"))
 	svg.p(".marker { stroke: %s; stroke-opacity: 1; stroke-width: 1 }", p.GetHexColor("marker"))
 	svg.p(".background { fill: %s }", p.GetHexColor("background"))

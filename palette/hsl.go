@@ -22,6 +22,8 @@ func NewHSL(h, s, l float64) *HSL {
 func NewHSLA(h, s, l, a float64) *HSL {
 	if h > 360 {
 		h -= 360
+	} else if h < 0 {
+		h += 360
 	}
 	return &HSL{h, s, l, a}
 }

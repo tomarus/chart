@@ -110,8 +110,7 @@ func (png *PNG) Line(color string, x1, y1, x2, y2 int) {
 		y1, y2 = y2, y1
 	}
 	skip := 1
-	if color == "gridlines" {
-		color = "grid"
+	if color == "grid" {
 		skip = 2
 	}
 	ruler := png.pal.GetColor(color)

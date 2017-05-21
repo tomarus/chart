@@ -21,6 +21,8 @@ func NewHSV(h, s, v float64) *HSV {
 func NewHSVA(h, s, v, a float64) *HSV {
 	if h > 360 {
 		h -= 360
+	} else if h < 0 {
+		h += 360
 	}
 	return &HSV{h, s, v, a}
 }

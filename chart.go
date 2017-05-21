@@ -86,9 +86,6 @@ type Options struct {
 	W             io.Writer // output writer to write image to
 }
 
-// DefaultTypes define some default chart types for convenience.
-var DefaultTypes = []string{"area", "area", "line", "line"}
-
 // Render renders the final image to the io.Writer.
 func (c *Chart) Render() error {
 	c.data.Normalize(c.height)
