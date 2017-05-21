@@ -26,7 +26,7 @@ opts := &chart.Options{
     Type:   chart.SVG,
     Size:   "auto",  // big is 1440px, small is 720px, auto is size of dataset
     Height: 300,     // Defaults to -1, when size=auto height=width/4, otherwise set fixed height
-    Scheme: "white", // or black/random/pink/solarized or hsv:180,0.5,0.25
+    Scheme: "white", // or black/random/pink/solarized or hsl:180,0.5,0.25
     Start:  start_epoch,
     End:    end_epoch,
     Xdiv:   12,

@@ -10,7 +10,7 @@
 // 	Size:   "big",   // big is 1440px, small is 720px, auto is size of dataset
 //	Height: 300,     // Defaults to -1, when size=auto height is set to width/4, otherwise set fixed height
 //	Width:  900,     // If a width is supplied, height is implied and both are used in stead of size setting
-// 	Scheme: "white", // or black/random/pink/solarized or hsv:180,0.5,0.25
+// 	Scheme: "white", // or black/random/pink/solarized or hsl:180,0.5,0.25
 // 	Start:  start_epoch,
 // 	End:    end_epoch,
 // 	Xdiv:   12,

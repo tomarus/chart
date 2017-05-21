@@ -81,27 +81,27 @@ func init() {
 func mkrandom(key string, r bool, hue, sat, val float64) {
 	if r {
 		hue = rand.Float64() * 360
-		sat = rand.Float64()/2 + .375
+		sat = rand.Float64()
 	}
 	lock.Lock()
 	defer lock.Unlock()
 	palettes[key] = map[string]string{
-		"background": col2hex(NewHSV(hue, sat/3, val/6).RGBA()),
-		"title":      col2hex(NewHSV(hue, 0, val).RGBA()),
-		"grid":       col2hex(NewHSV(hue, 0, val/2).RGBA()),
-		"border":     col2hex(NewHSV(hue, 0, val/2).RGBA()),
-		"marker":     col2hex(NewHSV(hue, sat/4, val/1.5).RGBA()),
-		"select":     col2hex(NewHSV(hue, sat/3, val/2).RGBA()),
-		"area":       col2hex(NewHSV(hue, sat, val/4*3).RGBA()),
-		"color1":     col2hex(NewHSV(hue+120, sat, val/4*3).RGBA()),
-		"color2":     col2hex(NewHSV(hue+240, sat, val/4*3).RGBA()),
-		"color3":     col2hex(NewHSV(hue+120, sat, val/4*3).RGBA()),
+		"background": col2hex(NewHSL(hue, sat/3, val/6).RGBA()),
+		"title":      col2hex(NewHSL(hue, 0, val).RGBA()),
+		"grid":       col2hex(NewHSL(hue, 0, val/2).RGBA()),
+		"border":     col2hex(NewHSL(hue, 0, val/2).RGBA()),
+		"marker":     col2hex(NewHSL(hue, sat/4, val/1.5).RGBA()),
+		"select":     col2hex(NewHSL(hue, sat/3, val/2).RGBA()),
+		"area":       col2hex(NewHSL(hue, sat, val/4*2).RGBA()),
+		"color1":     col2hex(NewHSL(hue+120, sat, val/4*2).RGBA()),
+		"color2":     col2hex(NewHSL(hue+240, sat, val/4*2).RGBA()),
+		"color3":     col2hex(NewHSL(hue+120, sat, val/4*2).RGBA()),
 	}
 
 }
 
-var mx1 = regexp.MustCompile("hsv:([0-9.]+),([0-9.]+),([0-9.]+)")
-var mx2 = regexp.MustCompile("hsv:([0-9a-f]{6})")
+var mx1 = regexp.MustCompile("hsl:([0-9.]+),([0-9.]+),([0-9.]+)")
+var mx2 = regexp.MustCompile("hsl:([0-9a-f]{6})")
 
 // NewPalette returns a color.Palette from the specified color scheme.
 func NewPalette(opts ...string) *Palette {
@@ -122,8 +122,8 @@ func NewPalette(opts ...string) *Palette {
 	}
 	if mx2.MatchString(scheme) {
 		x := mx2.FindStringSubmatch(scheme)
-		ch, _ := hex2hsv(x[1])
-		mkrandom(scheme, false, ch.H, ch.S, ch.V)
+		ch, _ := hex2hsl(x[1])
+		mkrandom(scheme, false, ch.H, ch.S, ch.L)
 	}
 
 	lock.RLock()

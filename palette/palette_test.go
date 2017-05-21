@@ -43,13 +43,13 @@ func TestRandom(t *testing.T) {
 		t.Errorf("Palette name should be random, is %#v", p)
 	}
 
-	p = NewPalette("hsv:180,0.5,0.5")
-	if p.Name != "hsv:180,0.5,0.5" {
-		t.Errorf("Palette name should be hsv:180,0.5,0.5, is %#v", p)
+	p = NewPalette("hsl:180,0.5,0.5")
+	if p.Name != "hsl:180,0.5,0.5" {
+		t.Errorf("Palette name should be hsl:180,0.5,0.5, is %#v", p)
 	}
 
-	p = NewPalette("hsv:804020")
-	if p.Name != "hsv:804020" {
-		t.Errorf("Palette name should be hsv:804020, is %#v", p)
+	p = NewPalette("hsl:804020")
+	if p.Name != "hsl:804020" {
+		t.Errorf("Palette name should be hsl:804020, is %#v", p)
 	}
 }

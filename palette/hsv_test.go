@@ -1,17 +1,11 @@
 package palette
 
 import (
-	"image/color"
+	"image"
+	"image/png"
+	"os"
 	"testing"
 )
-
-func TestConv(t *testing.T) {
-	u8 := OneTo8(0.5)
-	t.Log(u8)
-
-	f64 := EightTo1(128)
-	t.Log(f64)
-}
 
 func TestHSV(t *testing.T) {
 	var td = []struct {
@@ -19,10 +13,11 @@ func TestHSV(t *testing.T) {
 		E string
 	}{
 		{HSV{0, 1, 1, 1}, "#ff0000"},
-		{HSV{90, 1, 1, 1}, "#7fff00"},
+		{HSV{60, 1, 1, 1}, "#ffff00"},
+		{HSV{120, 1, 1, 1}, "#00ff00"},
 		{HSV{180, 1, 1, 1}, "#00ffff"},
-		{HSV{270, 1, 1, 1}, "#7f00ff"},
-		{HSV{360, 1, 1, 1}, "#ff0000"},
+		{HSV{240, 1, 1, 1}, "#0000ff"},
+		{HSV{300, 1, 1, 1}, "#ff00ff"},
 		//
 		{HSV{0, .5, 1, 1}, "#ff7f7f"},
 		{HSV{90, .5, 1, 1}, "#bfff7f"},
@@ -45,18 +40,28 @@ func TestHSV(t *testing.T) {
 	}
 }
 
-func TestColorOneEight(t *testing.T) {
-	test := color.RGBA{128, 160, 80, 255}
-	c := NewColor1(&test).RGBA()
-	if *c != test {
-		t.Error("Color1 != color.RGBA")
-	}
-}
-
-func TestString(t *testing.T) {
+func TestHSVString(t *testing.T) {
 	test := NewHSVA(360, .5, .5, 1)
 	s := test.String()
 	if s != "h360.00 s0.50 v0.50 a1.00" {
 		t.Errorf("String() did not match (%s)", s)
 	}
+}
+
+func TestHSVImage(t *testing.T) {
+	t.Skip()
+	f, err := os.OpenFile("/tmp/output-hsv.png", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+
+	img := image.NewRGBA(image.Rect(0, 0, 360, 200))
+	for h := 0; h < 360; h++ {
+		for v := 0; v < 200; v++ {
+			col := NewHSV(float64(h), 1., 1./200.*float64(v))
+			img.Set(h, v, col.RGBA())
+		}
+	}
+	png.Encode(f, img)
 }
