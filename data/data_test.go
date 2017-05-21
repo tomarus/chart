@@ -22,6 +22,18 @@ func eq(a, b []int) bool {
 	return true
 }
 
+func feq(a, b []float64) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func seq(a, b []string) bool {
 	if len(a) != len(b) {
 		return false
@@ -64,5 +76,30 @@ func TestSort(t *testing.T) {
 	sort.Sort(testData)
 	if testData[0].Type != "area" {
 		t.Errorf("Data is not sorted correctly (%#v)", testData)
+	}
+}
+
+func TestStretch(t *testing.T) {
+	data := NewData("line", []float64{1, 2, 3, 4, 5})
+	expect := []float64{1, 1, 2, 2, 3, 3, 4, 4, 5, 5}
+	data.Resample(10)
+	if !feq(data.raw, expect) {
+		t.Error("data should have changed")
+	}
+}
+
+func TestLTTB(t *testing.T) {
+	// XXX need some scientific testdata for this
+	data := NewData("line", []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+	res := data.lttb(10)
+	if !feq(res, data.raw) {
+		t.Error("data should not have changed")
+	}
+
+	data = NewData("line", []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+	expect := []float64{1, 2, 6, 9, 10}
+	data.Resample(5)
+	if !feq(data.raw, expect) {
+		t.Errorf("data should have changed (%v)", res)
 	}
 }

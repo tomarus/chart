@@ -218,16 +218,14 @@ function ma(n) {
 		document.getElementById('ma').firstElementChild.setAttribute('d', 'M0,0')
 		return
 	}
-	let max = h
-	let fmax = h
 	let smooth = 1<<mav
 	if (smooth>w) {
 		smooth = w
 	}
-	let v0 = norm(findma(n, 0, smooth), max, fmax)
+	let v0 = norm(findma(n, 0, smooth), h, h)
 	let p = 'M0,'+(h-v0)
 	for (let i=0; i<Math.min(w, data[n].values.length); i++) {
-		let v = norm(findma(n, i, smooth), max, fmax)
+		let v = norm(findma(n, i, smooth), h, h)
 		p += 'L'+i+','+(h-v)
 	}
 	document.getElementById('ma').firstElementChild.setAttribute('d', p)

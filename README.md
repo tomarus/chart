@@ -54,6 +54,5 @@ This project has very few Go dependencies and no Javascript dependencies. Only f
 This project has just started and a lot of stuf is still missing or incomplete.
 
 This is a small list of ideas/todos:
-* Data interpolation (data must match graph size now)
-* Bar charts (basically wider area pixels)
 * Custom lines and markers, like 95th percentile line, downtime markers, etc
+* Complete legends and dataset descriptions

@@ -24,10 +24,10 @@ func (c *Chart) ygrid(x, y, n int) {
 	}
 
 	c.image.ID("ygrid")
-	kutje := 0
+	scale := 0
 	for iy := y; iy <= c.height; iy += c.height / n {
-		c.image.Text("grid", "end", x-4, iy+4, c.data[0].Scale[kutje])
-		kutje++
+		c.image.Text("grid", "end", x-4, iy+4, c.data[0].Scale[scale])
+		scale++
 	}
 	c.image.EndID()
 }

@@ -1,8 +1,4 @@
 // Package chart generates interactive svg charts from time series data.
-// It currently generates one single chart with one or more datasets
-// of 720 or 1440 point each. Other sizes are not supported at this time.
-// The caller is responsible to interpolate the source data and supply
-// an array of 720 or 1440 points.
 //
 // Example
 //
@@ -12,6 +8,8 @@
 // 	Title:  "Traffic",
 //	Type:   chart.SVG,
 // 	Size:   "big",   // big is 1440px, small is 720px, auto is size of dataset
+//	Height: 300,     // Defaults to -1, when size=auto height is set to width/4, otherwise set fixed height
+//	Width:  900,     // If a width is supplied, height is implied and both are used in stead of size setting
 // 	Scheme: "white", // or black/random/pink/solarized or hsv:180,0.5,0.25
 // 	Start:  start_epoch,
 // 	End:    end_epoch,
@@ -116,19 +114,28 @@ func (c *Chart) drawTitle(width, height int) {
 
 // AddData adds a single datasource of type t and data d
 // A warning is returned if the graph + data sizes do not match.
-func (c *Chart) AddData(t string, d []float64) error {
-	c.data = append(c.data, data.NewData(t, d))
+func (c *Chart) AddData(t string, d []float64) (err error) {
+	newdata := data.NewData(t, d)
+	if len(d) == 0 {
+		c.data = append(c.data, newdata)
+		return fmt.Errorf("Added empty dataset")
+	}
+
+	// Setup auto width if not done so already.
 	if c.width == -1 {
 		c.width = len(d)
 		if c.height == -1 {
 			c.height = c.width / 4
 		}
-		return nil
 	}
+
 	if len(d) != c.width {
-		return fmt.Errorf("data length %d does not equal graph size %d", len(d), c.width)
+		newdata.Resample(c.width)
+		err = fmt.Errorf("Resampling data from %d to %d", len(d), c.width)
 	}
-	return nil
+
+	c.data = append(c.data, newdata)
+	return err
 }
 
 // NewChart initializes a new svg chart.
