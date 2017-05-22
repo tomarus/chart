@@ -61,6 +61,15 @@ func TestNormalizeMax(t *testing.T) {
 	}
 }
 
+func TestNormalizeZeros(t *testing.T) {
+	expect := []int{0, 0, 0, 0, 0}
+	td := NewData("line", []float64{0, 0, 0, 0, 0})
+	td.normalize(10)
+	if !eq(td.Values, expect) {
+		t.Errorf("Expected %#v got %#v", expect, td.Values)
+	}
+}
+
 func TestChartNormalize(t *testing.T) {
 	testData.Normalize(10)
 	if testData[0].Max != 5 {

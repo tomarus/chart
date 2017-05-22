@@ -24,6 +24,14 @@ func (d *Data) normalize(height int) {
 		}
 	}
 
+	if d.Max == 0 {
+		// we have an empty dataset
+		for _, v := range d.raw {
+			d.Values = append(d.Values, int(v))
+		}
+		return
+	}
+
 	fmax := float64(height)
 	a := fmax / d.Max
 	b := fmax - a*d.Max
