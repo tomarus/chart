@@ -94,7 +94,11 @@ function marker(s, x, y) {
 	let px = x-mx
 	let py = y-my
 	let v = data[active||0].fmax - data[active||0].fmax / h * py
-	let d = new Date((end - start) / w * Math.min(px, selx-mx||0) + start)
+	if (selx > 0 && selx != w) {
+		d = new Date((end - start) / w * Math.min(px, selx-mx||0) + start)
+	} else {
+		d = new Date(((end-start) / w * px) + start)
+	}
 	seltxt = d.toLocaleTimeString('nl-NL', dopt)
 	if (selmode) {
 		let v2 = data[active||0].fmax / h * dy
