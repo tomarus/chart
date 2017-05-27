@@ -15,6 +15,11 @@ func NewData(typ string, in []float64) Data {
 	return Data{Type: typ, raw: in}
 }
 
+// Len returns the number of items in the dataset.
+func (d *Data) Len() int {
+	return len(d.raw)
+}
+
 // Normalize normalizes the raw/tsm values to height.
 func (d *Data) normalize(height int) {
 	d.Max = 0.

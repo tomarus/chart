@@ -46,6 +46,12 @@ func seq(a, b []string) bool {
 	return true
 }
 
+func TestLen(t *testing.T) {
+	if testData[0].Len() != 5 {
+		t.Error("Length should be 5")
+	}
+}
+
 func TestNormalize(t *testing.T) {
 	testData[0].normalize(10)
 	expect := []int{2, 4, 6, 8, 10}

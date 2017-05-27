@@ -83,6 +83,12 @@ type Options struct {
 
 // Render renders the final image to the io.Writer.
 func (c *Chart) Render() error {
+	if len(c.data) == 0 {
+		return fmt.Errorf("no data available")
+	}
+	if c.xdiv >= c.data[0].Len() {
+		return fmt.Errorf("xdivisions higher than dataset length")
+	}
 	c.data.Normalize(c.height)
 	sort.Sort(c.data)
 	c.scales(c.ydiv)
