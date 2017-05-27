@@ -6,11 +6,11 @@
 //
 // opts := &chart.Options{
 // 	Title:  "Traffic",
-//	Type:   chart.SVG,
-// 	Size:   "big",   // big is 1440px, small is 720px, auto is size of dataset
-//	Height: 300,     // Defaults to -1, when size=auto height is set to width/4, otherwise set fixed height
-//	Width:  900,     // If a width is supplied, height is implied and both are used in stead of size setting
-// 	Scheme: "white", // or black/random/pink/solarized or hsl:180,0.5,0.25
+//	Image:  svg.New(), // or png.New()
+// 	Size:   "big",     // big is 1440px, small is 720px, auto is size of dataset
+//	Height: 300,       // Defaults to -1, when size=auto height is set to width/4, otherwise set fixed height
+//	Width:  900,       // If a width is supplied, height is implied and both are used in stead of size setting
+// 	Scheme: "white",   // or black/random/pink/solarized or hsl:180,0.5,0.25
 // 	Start:  start_epoch,
 // 	End:    end_epoch,
 // 	Xdiv:   12,
@@ -40,18 +40,11 @@ import (
 
 	"github.com/tomarus/chart/data"
 	"github.com/tomarus/chart/palette"
-	"github.com/tomarus/chart/png"
-	"github.com/tomarus/chart/svg"
-)
-
-const (
-	SVG = iota
-	PNG
 )
 
 // Image defines the interface for image (svg/png) backends.
 type Image interface {
-	Start(w, h, mx, my, start, end int, p *palette.Palette)
+	Start(wr io.Writer, w, h, mx, my, start, end int, p *palette.Palette)
 	End() error
 	Graph(data.Collection)
 	Text(color, align string, x, y int, txt string)
@@ -72,6 +65,7 @@ type Chart struct {
 	data             data.Collection
 	palette          *palette.Palette
 	image            Image
+	writer           io.Writer
 }
 
 // Options defines a type used to initialize a Chart using NewChart()
@@ -82,7 +76,7 @@ type Options struct {
 	Scheme        string    // palette colorscheme, default "white"
 	Start, End    uint64    // start + end epoch of data
 	Xdiv, Ydiv    int       // num grid divisions (default x12 y5)
-	Type          int       // chart.SVG (or chart.PNG when finished )
+	Image         Image     // the chart image type, chart.SVG{} or chart.PNG{}
 	W             io.Writer // output writer to write image to
 }
 
@@ -91,7 +85,7 @@ func (c *Chart) Render() error {
 	c.data.Normalize(c.height)
 	sort.Sort(c.data)
 	c.scales(c.ydiv)
-	c.image.Start(c.width, c.height, c.marginx, c.marginy, int(c.start), int(c.end), c.palette)
+	c.image.Start(c.writer, c.width, c.height, c.marginx, c.marginy, int(c.start), int(c.end), c.palette)
 	c.image.Graph(c.data)
 	c.xgrid(c.marginx, c.marginy, c.xdiv, c.start, c.end)
 	c.ygrid(c.marginx, c.marginy, c.ydiv)
@@ -137,18 +131,8 @@ func (c *Chart) AddData(t string, d []float64) (err error) {
 
 // NewChart initializes a new svg chart.
 func NewChart(o *Options) (*Chart, error) {
-	var img Image
-	switch o.Type {
-	case SVG:
-		img, _ = svg.New(o.W)
-	case PNG:
-		img, _ = png.New(o.W)
-	default:
-		return nil, fmt.Errorf("unsupported format")
-	}
-	c := &Chart{title: o.Title, marginx: 48, marginy: 20, image: img}
+	c := &Chart{title: o.Title, marginx: 48, marginy: 20, image: o.Image, writer: o.W}
 
-	// XXX make this flexible
 	if o.Size == "big" {
 		c.width = 1440
 		c.height = 360

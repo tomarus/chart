@@ -18,11 +18,12 @@ type SVG struct {
 	pal              *palette.Palette
 }
 
-func New(w io.Writer) (*SVG, error) {
-	return &SVG{w: w}, nil
+func New() *SVG {
+	return &SVG{}
 }
 
-func (svg *SVG) Start(w, h, mx, my, start, end int, p *palette.Palette) {
+func (svg *SVG) Start(wr io.Writer, w, h, mx, my, start, end int, p *palette.Palette) {
+	svg.w = wr
 	svg.width = w
 	svg.height = h
 	svg.marginx = mx

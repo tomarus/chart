@@ -26,11 +26,12 @@ type PNG struct {
 	img              *image.Paletted
 }
 
-func New(w io.Writer) (*PNG, error) {
-	return &PNG{w: w}, nil
+func New() *PNG {
+	return &PNG{}
 }
 
-func (png *PNG) Start(w, h, mx, my, start, end int, p *palette.Palette) {
+func (png *PNG) Start(wr io.Writer, w, h, mx, my, start, end int, p *palette.Palette) {
+	png.w = wr
 	png.width = w
 	png.height = h
 	png.marginx = mx
