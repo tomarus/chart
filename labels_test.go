@@ -32,10 +32,12 @@ func TestXLabels(t *testing.T) {
 	labelChart.start = float64(t0.Unix() * 1000)
 	labelChart.end = float64(t1.Unix() * 1000)
 	labelChart.width = 1440
-	// XXX variations possible but not tested!
-	expect := []string{"01-03 11:00", "01-05 21:00", "01-08 07:00", "01-10 17:00", "01-13 03:00", "01-15 13:00", "01-17 23:00", "01-20 09:00", "01-22 19:00", "01-25 05:00", "01-27 15:00"}
+
 	labels := labelChart.xlabels(12)
-	if !seq(labels, expect) {
-		t.Errorf("Expected %#v got %#v", expect, labels)
+	for i, lbl := range labels {
+		exp := time.Unix(t0.Unix()+(int64(i+1)*((29*86400)/12)), 0).Format("01-02 15:04")
+		if lbl != exp {
+			t.Errorf("Expected %v got %v", exp, lbl)
+		}
 	}
 }
