@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tomarus/chart/png"
 	"github.com/tomarus/chart/svg"
 )
 
@@ -90,6 +91,14 @@ func TestChart(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
+	// TODO: actually test svg output somehow
 
-	// t.Log(out.String())
+	opts.Image = png.New()
+	c, _ = NewChart(opts)
+	c.AddData("area", []float64{1, 2, 3, 4, 5, 6})
+	err = c.Render()
+	if err != nil {
+		t.Fatalf("unexpected error %v", err)
+	}
+	// TODO: actually test png output somehow
 }
