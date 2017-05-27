@@ -1,3 +1,8 @@
+[![Build Status](https://api.travis-ci.org/tomarus/chart.svg)](https://travis-ci.org/tomarus/chart)
+[![Coverage Status](https://coveralls.io/repos/github/tomarus/chart/badge.svg?branch=master)](https://coveralls.io/github/tomarus/chart?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/tomarus/chart)](https://goreportcard.com/report/github.com/tomarus/chart)
+[![GoDoc](https://godoc.org/github.com/tomarus/chart?status.svg)](https://godoc.org/github.com/tomarus/chart)
+
 # Go Chart Lib
 
 Dead simple rrd like interactive svg graphs with focus on pixel perfect rendering of source data.
