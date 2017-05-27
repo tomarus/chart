@@ -53,7 +53,7 @@ func TestRandom(t *testing.T) {
 		t.Errorf("Palette name should be hsl:180,0.5,0.5, is %#v", p)
 	}
 
-	p = NewPalette("hsl:804020")
+	p = NewPalette("hsl:804020", "light")
 	if p.Name != "hsl:804020" {
 		t.Errorf("Palette name should be hsl:804020, is %#v", p)
 	}

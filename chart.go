@@ -74,6 +74,7 @@ type Options struct {
 	Size          string    // big is 1440px, small is 720px, auto is size of dataset
 	Width, Height int       // overrides Size
 	Scheme        string    // palette colorscheme, default "white"
+	Theme         string    // if random scheme is used, set to "light" to use light colors, otherwise a dark theme is generated
 	Start, End    uint64    // start + end epoch of data
 	Xdiv, Ydiv    int       // num grid divisions (default x12 y5)
 	Image         Image     // the chart image type, chart.SVG{} or chart.PNG{}
@@ -163,7 +164,7 @@ func NewChart(o *Options) (*Chart, error) {
 	c.end = float64(o.End * 1000.0)
 
 	if o.Scheme != "" {
-		c.palette = palette.NewPalette(o.Scheme)
+		c.palette = palette.NewPalette(o.Scheme, o.Theme)
 	} else {
 		c.palette = palette.NewPalette("white")
 	}

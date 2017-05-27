@@ -80,7 +80,7 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func mkrandom(key string, r bool, hue, sat, val float64) {
+func mkrandom(key string, r bool, hue, sat, val float64, light bool) {
 	if r {
 		hue = rand.Float64() * 360
 		sat = rand.Float64()/2 + .5
@@ -96,7 +96,7 @@ func mkrandom(key string, r bool, hue, sat, val float64) {
 	c[6] = colors.NewHSL(hue, 0.5*sat, 0.8*val).RGBA()
 	c[7] = colors.NewHSL(hue+180, 0.5*sat, 0.45*val).RGBA()
 
-	light := true
+	// defaults to dark theme
 	if light {
 		c[2] = c[0]
 		c[0] = colors.NewHSL(hue, 0.15*sat, 0.9*val).RGBA()
@@ -127,21 +127,25 @@ func NewPalette(opts ...string) *Palette {
 	if len(opts) > 0 {
 		scheme = opts[0]
 	}
+	light := false
+	if len(opts) > 1 && opts[1] == "light" {
+		light = true
+	}
 
 	if scheme == "random" {
-		mkrandom("random", true, 0, 1, 1)
+		mkrandom("random", true, 0, 1, 1, light)
 	}
 	if mx1.MatchString(scheme) {
 		x := mx1.FindStringSubmatch(scheme)
 		fx, _ := strconv.ParseFloat(x[1], 10)
 		fsat, _ := strconv.ParseFloat(x[2], 10)
 		fval, _ := strconv.ParseFloat(x[3], 10)
-		mkrandom(scheme, false, fx, fsat, fval)
+		mkrandom(scheme, false, fx, fsat, fval, light)
 	}
 	if mx2.MatchString(scheme) {
 		x := mx2.FindStringSubmatch(scheme)
 		ch, _ := colors.NewHSLHex(x[1])
-		mkrandom(scheme, false, ch.H, ch.S, ch.L)
+		mkrandom(scheme, false, ch.H, ch.S, ch.L, light)
 	}
 
 	lock.RLock()
