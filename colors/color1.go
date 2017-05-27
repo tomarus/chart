@@ -1,4 +1,4 @@
-package palette
+package colors
 
 import "image/color"
 

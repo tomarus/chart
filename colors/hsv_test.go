@@ -1,4 +1,4 @@
-package palette
+package colors
 
 import (
 	"image"
@@ -37,6 +37,24 @@ func TestHSV(t *testing.T) {
 		if x != test.E {
 			t.Errorf("Expected %s got %s", test.E, x)
 		}
+	}
+}
+
+func TestHSVGrey(t *testing.T) {
+	r := NewHSV(180, 0., .5).RGBA()
+	if r.R != r.G || r.G != r.B || r.B != r.R {
+		t.Error("Should have greyscale color")
+	}
+}
+
+func TestHSVOverflow(t *testing.T) {
+	c := NewHSV(400, .5, .5)
+	if !cmp(c.H, 40) {
+		t.Errorf("Hue should be 40, got %v", c.H)
+	}
+	c = NewHSV(-40, .5, .5)
+	if !cmp(c.H, 320) {
+		t.Errorf("Hue should be 320, got %v", c.H)
 	}
 }
 

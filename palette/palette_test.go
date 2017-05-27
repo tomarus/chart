@@ -35,6 +35,11 @@ func TestPalette(t *testing.T) {
 	if ch != "#0000ff" {
 		t.Error("Axis 1 color should be #00f")
 	}
+
+	n := pal.GetAxisColorName(0)
+	if n != "area" {
+		t.Error("First axis color should be area")
+	}
 }
 
 func TestRandom(t *testing.T) {

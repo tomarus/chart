@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/tomarus/chart/colors"
 )
 
 var palettes = map[string]map[string]string{
@@ -85,14 +87,20 @@ func mkrandom(key string, r bool, hue, sat, val float64) {
 	}
 
 	c := make([]*color.RGBA, 8)
-	c[0] = NewHSL(hue, 0.15*sat, 0.1*val).RGBA()
-	c[1] = NewHSL(hue, 0.01*sat, 0.3*val).RGBA() // XXX this should have alpha
-	c[2] = NewHSL(hue, 0.05*sat, 0.9*val).RGBA()
-	c[3] = NewHSL(hue, 0.5*sat, 0.8*val).RGBA()
-	c[4] = NewHSL(hue, 0.5*sat, 0.45*val).RGBA()
-	c[5] = NewHSL(hue, 0.5*sat, 0.66*val).RGBA()
-	c[6] = NewHSL(hue, 0.5*sat, 0.8*val).RGBA()
-	c[7] = NewHSL(hue+180, 0.5*sat, 0.75*val).RGBA()
+	c[0] = colors.NewHSL(hue, 0.15*sat, 0.1*val).RGBA()
+	c[1] = colors.NewHSL(hue, 0.01*sat, 0.3*val).RGBA() // XXX this should have alpha
+	c[2] = colors.NewHSL(hue, 0.05*sat, 0.9*val).RGBA()
+	c[3] = colors.NewHSL(hue, 0.5*sat, 0.8*val).RGBA()
+	c[4] = colors.NewHSL(hue, 0.5*sat, 0.45*val).RGBA()
+	c[5] = colors.NewHSL(hue, 0.5*sat, 0.66*val).RGBA()
+	c[6] = colors.NewHSL(hue, 0.5*sat, 0.8*val).RGBA()
+	c[7] = colors.NewHSL(hue+180, 0.5*sat, 0.45*val).RGBA()
+
+	light := true
+	if light {
+		c[2] = c[0]
+		c[0] = colors.NewHSL(hue, 0.15*sat, 0.9*val).RGBA()
+	}
 
 	lock.Lock()
 	defer lock.Unlock()
@@ -132,7 +140,7 @@ func NewPalette(opts ...string) *Palette {
 	}
 	if mx2.MatchString(scheme) {
 		x := mx2.FindStringSubmatch(scheme)
-		ch, _ := hex2hsl(x[1])
+		ch, _ := colors.NewHSLHex(x[1])
 		mkrandom(scheme, false, ch.H, ch.S, ch.L)
 	}
 

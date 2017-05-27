@@ -17,13 +17,6 @@ func hex2col(in string) (color.Color, error) {
 	return color.RGBA{dst[0], dst[1], dst[2], 255}, err
 }
 
-// hex2hsl converts a hex color with format [0-9a-f]{6} to a HSL color.
-func hex2hsl(in string) (HSL, error) {
-	dst := make([]byte, 3)
-	_, err := hex.Decode(dst, []byte(in))
-	return HSL{float64(360 / 255 * dst[0]), EightTo1(dst[1]), EightTo1(dst[2]), 1.}, err
-}
-
 // col2hex converts a color.RGBA to a hex string.
 func col2hex(in *color.RGBA) string {
 	return fmt.Sprintf("#%02x%02x%02x", in.R, in.G, in.B)

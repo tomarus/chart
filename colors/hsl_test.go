@@ -1,12 +1,17 @@
-package palette
+package colors
 
 import (
+	"fmt"
 	"image"
+	"image/color"
 	"image/png"
 	"os"
 	"testing"
 )
 
+func col2hex(in *color.RGBA) string {
+	return fmt.Sprintf("#%02x%02x%02x", in.R, in.G, in.B)
+}
 func TestHSL(t *testing.T) {
 	var td = []struct {
 		H HSL
@@ -36,6 +41,43 @@ func TestHSL(t *testing.T) {
 		if x != test.E {
 			t.Errorf("Expected %s got %s", test.E, x)
 		}
+	}
+}
+
+func cmp(a, b float64) bool {
+	const e = 1e-2
+	return (a-b) < e && (b-a) < e
+}
+
+func TestHSLHex(t *testing.T) {
+	c, err := NewHSLHex("invalid")
+	if err == nil {
+		t.Fatal("Expected error, got nil")
+	}
+	c, err = NewHSLHex("8040c0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !cmp(c.H, 180.) || !cmp(c.S, 0.25) || !cmp(c.L, 0.75) {
+		t.Errorf("Expected h=180, s=.25, l=.75 got %v", c)
+	}
+}
+
+func TestHSLGrey(t *testing.T) {
+	r := NewHSL(180, 0., .5).RGBA()
+	if r.R != r.G || r.G != r.B || r.B != r.R {
+		t.Error("Should have greyscale color")
+	}
+}
+
+func TestHSLOverflow(t *testing.T) {
+	c := NewHSL(400, .5, .5)
+	if !cmp(c.H, 40) {
+		t.Errorf("Hue should be 40, got %v", c.H)
+	}
+	c = NewHSL(-40, .5, .5)
+	if !cmp(c.H, 320) {
+		t.Errorf("Hue should be 320, got %v", c.H)
 	}
 }
 

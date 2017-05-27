@@ -1,6 +1,7 @@
-package palette
+package colors
 
 import (
+	"encoding/hex"
 	"fmt"
 	"image/color"
 )
@@ -26,6 +27,16 @@ func NewHSLA(h, s, l, a float64) *HSL {
 		h += 360
 	}
 	return &HSL{h, s, l, a}
+}
+
+// NewHSLHex creates a new HSL color from a 6 digit hex string, like "33ff00"
+func NewHSLHex(in string) (*HSL, error) {
+	dst := make([]byte, 3)
+	_, err := hex.Decode(dst, []byte(in))
+	if err != nil {
+		return nil, err
+	}
+	return NewHSLA(float64(dst[0])/256*360., EightTo1(dst[1]), EightTo1(dst[2]), 1.), nil
 }
 
 func (hsl *HSL) RGBA() *color.RGBA {
