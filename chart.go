@@ -1,36 +1,4 @@
 // Package chart generates interactive svg charts from time series data.
-//
-// Example
-//
-// import "github.com/tomarus/chart"
-//
-// opts := &chart.Options{
-// 	Title:  "Traffic",
-//	Image:  svg.New(), // or png.New()
-// 	Size:   "big",     // big is 1440px, small is 720px, auto is size of dataset
-//	Height: 300,       // Defaults to -1, when size=auto height is set to width/4, otherwise set fixed height
-//	Width:  900,       // If a width is supplied, height is implied and both are used in stead of size setting
-// 	Scheme: "white",   // or black/random/pink/solarized or hsl:180,0.5,0.25
-// 	Start:  start_epoch,
-// 	End:    end_epoch,
-// 	Xdiv:   12,
-// 	Ydiv:   5,
-// 	W:      w,
-// }
-//
-// c, err := chart.NewChart(opts)
-// if err != nil {
-// 	panic(err)
-// }
-//
-// warn := c.AddData("area", []yourData)
-// if err != nil {
-// 	fmt.Println(warn)
-// }
-//
-// w.Header().Set("Content-Type", "image/svg+xml")
-// c.Render()
-//
 package chart
 
 import (
@@ -112,8 +80,8 @@ func (c *Chart) drawTitle(width, height int) {
 
 // AddData adds a single datasource of type t and data d
 // A warning is returned if the graph + data sizes do not match.
-func (c *Chart) AddData(t string, d []float64) (err error) {
-	newdata := data.NewData(t, d)
+func (c *Chart) AddData(opt *data.Options, d []float64) (err error) {
+	newdata := data.NewData(opt, d)
 	if len(d) == 0 {
 		c.data = append(c.data, newdata)
 		return fmt.Errorf("Added empty dataset")

@@ -45,7 +45,7 @@ c, err := chart.NewChart(opts)
 if err != nil {
     panic(err)
 }
-warn := c.AddData("area", []yourData)
+warn := c.AddData(&data.Options{Type: "area", Title: "My Data Description"}, []yourData)
 if err != nil {
     fmt.Println(warn)
 }

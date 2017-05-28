@@ -8,16 +8,42 @@ type Data struct {
 	Scale  []string `json:"scale"`  // yaxis labels
 	Values []int    `json:"values"` // pixel values
 	Type   string   `json:"type"`
+	Title  string   `json:"title"`
+}
+
+// Options contains configuration for a single dataset.
+type Options struct {
+	Type  string
+	Title string
 }
 
 // NewData creates a new dataset from []float64.
-func NewData(typ string, in []float64) Data {
-	return Data{Type: typ, raw: in}
+func NewData(opt *Options, in []float64) Data {
+	return Data{Type: opt.Type, Title: opt.Title, raw: in}
 }
 
 // Len returns the number of items in the dataset.
 func (d *Data) Len() int {
 	return len(d.raw)
+}
+
+// MinMaxAvg returns the Minimum, Maximum and Average values of the raw data.
+func (d *Data) MinMaxAvg() (float64, float64, float64) {
+	max := 0.
+	avg := 0.
+	min := 0.
+	for _, v := range d.raw {
+		if max < v {
+			max = v
+		}
+		if v != 0 && (min == 0 || min > v) {
+			min = v
+		}
+		avg += v
+	}
+	avg /= float64(len(d.raw))
+	d.Max = max
+	return min, max, avg
 }
 
 // Normalize normalizes the raw/tsm values to height.

@@ -6,7 +6,7 @@ func (d *Data) CreateScale(n int) {
 	max := d.Max
 	skippy := max / float64(n)
 	for iy := 0; iy < n; iy++ {
-		d.Scale = append(d.Scale, formatSI(max, 1, 1000, "", "", ""))
+		d.Scale = append(d.Scale, FormatSI(max, 1, 1000, "", "", ""))
 		max -= skippy
 	}
 }

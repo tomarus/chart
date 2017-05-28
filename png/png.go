@@ -1,22 +1,21 @@
 package png
 
 import (
+	"fmt"
 	"image"
 	"image/draw"
+	pngo "image/png"
 	"io"
-	"log"
 
-	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/gofont/goregular"
+	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/math/fixed"
 
 	"github.com/tomarus/chart/data"
 	"github.com/tomarus/chart/palette"
-
-	pngo "image/png"
 )
 
+// PNG implements the chart interface to write PNG images.
 type PNG struct {
 	w                io.Writer
 	width, height    int
@@ -39,11 +38,6 @@ func (png *PNG) Start(wr io.Writer, w, h, mx, my, start, end int, p *palette.Pal
 	png.start = start
 	png.end = end
 	png.pal = p
-
-	png.img = image.NewPaletted(image.Rect(0, 0, w+mx+32, h+(2*my)), p.Palette)
-
-	bg := image.NewUniform(p.GetColor("background"))
-	draw.Draw(png.img, png.img.Bounds(), bg, image.ZP, draw.Src)
 }
 
 func (png *PNG) End() error {
@@ -51,6 +45,11 @@ func (png *PNG) End() error {
 }
 
 func (png *PNG) Graph(d data.Collection) {
+	png.img = image.NewPaletted(image.Rect(0, 0, png.width+png.marginx+4, png.height+(2*png.marginy)+(d.Len()*16)), png.pal.Palette)
+
+	bg := image.NewUniform(png.pal.GetColor("background"))
+	draw.Draw(png.img, png.img.Bounds(), bg, image.ZP, draw.Src)
+
 	for pt := range d {
 		data := d[pt]
 		col := png.pal.GetAxisColorName(pt)
@@ -63,25 +62,12 @@ func (png *PNG) Graph(d data.Collection) {
 	}
 }
 
-func (png *PNG) Text(color, align string, x, y int, txt string) {
-	size := 12.
-	dpi := 72.
-
-	f, err := truetype.Parse(goregular.TTF)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	fill := image.NewUniform(png.pal.GetColor(color))
+func (png *PNG) Text(col, align string, x, y int, txt string) {
+	fill := image.NewUniform(png.pal.GetColor("title")) // Palette[2])
 	d := &font.Drawer{
-		Dst: png.img,
-		Src: fill,
-		Face: truetype.NewFace(f, &truetype.Options{
-			Size:    size,
-			DPI:     dpi,
-			Hinting: font.HintingFull,
-		}),
+		Dst:  png.img,
+		Src:  fill,
+		Face: basicfont.Face7x13,
 		Dot: fixed.Point26_6{
 			X: fixed.I(x),
 			Y: fixed.I(y),
@@ -126,8 +112,33 @@ func (png *PNG) Line(color string, x1, y1, x2, y2 int) {
 	}
 }
 
-func (png *PNG) Legend(data.Collection, *palette.Palette) {
-	// TODO
+func (png *PNG) rectFill(color string, x1, y1, w, h int) {
+	for i := 0; i < h; i++ {
+		png.Line(color, x1, y1+i, x1+w, y1+i)
+	}
+}
+
+func (png *PNG) Legend(d data.Collection, p *palette.Palette) {
+	x := png.marginx
+	y := png.height + png.marginy + 4
+
+	maxstrlen := 0
+	for i := range d {
+		if len(d[i].Title) >= maxstrlen {
+			maxstrlen = len(d[i].Title)
+		}
+	}
+	for i := range d {
+		png.rectFill(p.GetAxisColorName(i), x, y+16+(i*16), 12, 12)
+
+		min, max, avg := d[i].MinMaxAvg()
+		mmax := data.FormatSI(max, 1, 1000, "", "", "")
+		mmin := data.FormatSI(min, 1, 1000, "", "", "")
+		mavg := data.FormatSI(avg, 1, 1000, "", "", "")
+		q := fmt.Sprintf("%%-%ds    Max: %%6s    Avg: %%6s    Min: %%6s", maxstrlen)
+		s := fmt.Sprintf(q, d[i].Title, mmax, mavg, mmin)
+		png.Text("title", "left", x+20, y+26+(i*16), s)
+	}
 }
 
 func (png *PNG) Border(x, y, w, h int) {

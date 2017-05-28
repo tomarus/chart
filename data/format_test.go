@@ -24,7 +24,7 @@ var testFormat = []struct {
 
 func TestFormatSI(t *testing.T) {
 	for _, f := range testFormat {
-		res := formatSI(f.v, f.d, f.k, f.s1, f.s2, f.s3)
+		res := FormatSI(f.v, f.d, f.k, f.s1, f.s2, f.s3)
 		if res != f.expect {
 			t.Errorf("Expected %s got %s testdata %v", f.expect, res, f)
 		}
