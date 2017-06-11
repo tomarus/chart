@@ -46,7 +46,7 @@ func (d *Data) lttb(width int) []float64 {
 
 	for i := 0; i < width-2; i++ {
 		// Calculate next bucket average
-		avgx, avgy := 0, 0.
+		avgy := 0.
 		rangeStart := int(math.Floor(float64(i+1)*every) + 1)
 		rangeEnd := int(math.Floor(float64(i+2)*every) + 1)
 		if rangeEnd > L {
@@ -55,10 +55,8 @@ func (d *Data) lttb(width int) []float64 {
 		rangeLen := rangeEnd - rangeStart
 
 		for ; rangeStart < rangeEnd; rangeStart++ {
-			avgx += rangeStart
 			avgy += d.raw[rangeStart]
 		}
-		avgx /= rangeLen
 		avgy /= float64(rangeLen)
 
 		// Get range for bucket
