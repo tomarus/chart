@@ -6,8 +6,8 @@ import (
 )
 
 var testData = Collection{
-	NewData(&Options{"line", ""}, []float64{1, 2, 3, 4, 5}),
-	NewData(&Options{"area", ""}, []float64{10, 20, 30, 40, 50}),
+	NewData(&Options{"line", "", .05}, []float64{1, 2, 3, 4, 5}),
+	NewData(&Options{"area", "", .05}, []float64{10, 20, 30, 40, 50}),
 }
 
 func eq(a, b []int) bool {
@@ -69,7 +69,7 @@ func TestNormalizeMax(t *testing.T) {
 
 func TestNormalizeZeros(t *testing.T) {
 	expect := []int{0, 0, 0, 0, 0}
-	td := NewData(&Options{"line", ""}, []float64{0, 0, 0, 0, 0})
+	td := NewData(&Options{"line", "", .05}, []float64{0, 0, 0, 0, 0})
 	td.normalize(10)
 	if !eq(td.Values, expect) {
 		t.Errorf("Expected %#v got %#v", expect, td.Values)
@@ -95,7 +95,7 @@ func TestSort(t *testing.T) {
 }
 
 func TestStretch(t *testing.T) {
-	data := NewData(&Options{"line", ""}, []float64{1, 2, 3, 4, 5})
+	data := NewData(&Options{"line", "", .0}, []float64{1, 2, 3, 4, 5})
 	expect := []float64{1, 1, 2, 2, 3, 3, 4, 4, 5, 5}
 	data.Resample(10)
 	if !feq(data.raw, expect) {
@@ -105,13 +105,13 @@ func TestStretch(t *testing.T) {
 
 func TestLTTB(t *testing.T) {
 	// XXX need some scientific testdata for this
-	data := NewData(&Options{"line", ""}, []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+	data := NewData(&Options{"line", "", .05}, []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
 	res := data.lttb(10)
 	if !feq(res, data.raw) {
 		t.Error("data should not have changed")
 	}
 
-	data = NewData(&Options{"line", ""}, []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+	data = NewData(&Options{"line", "", .05}, []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
 	expect := []float64{1, 2, 6, 9, 10}
 	data.Resample(5)
 	if !feq(data.raw, expect) {
@@ -120,7 +120,7 @@ func TestLTTB(t *testing.T) {
 }
 
 func TestMinMaxAvg(t *testing.T) {
-	data := NewData(&Options{"line", ""}, []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+	data := NewData(&Options{"line", "", .05}, []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
 	m, x, a := data.MinMaxAvg()
 	if m != 1 {
 		t.Error("min should be 1")

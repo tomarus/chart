@@ -19,7 +19,12 @@ func (d *Data) stretch(width int) []float64 {
 	max := len(d.raw)
 	for i := 0; i < width; i++ {
 		idx := float64(max) / float64(width) * float64(i)
-		newdata[i] = d.raw[int(idx)]
+		v := d.raw[int(idx)]
+		f := idx - float64(int(idx))
+		if f < d.gap || f > 1-d.gap {
+			v = 0
+		}
+		newdata[i] = v
 	}
 	return newdata
 }

@@ -2,24 +2,36 @@ package data
 
 // Data contains a single set of data most likely imported from tsm.
 type Data struct {
-	raw    []float64
-	Max    float64  `json:"fmax"`   // max raw value
-	NMax   int      `json:"max"`    // max normalized value
-	Scale  []string `json:"scale"`  // yaxis labels
-	Values []int    `json:"values"` // pixel values
-	Type   string   `json:"type"`
-	Title  string   `json:"title"`
+	raw    []float64 ``              // raw values
+	gap    float64   ``              // gap in % between bar chart values
+	Max    float64   `json:"fmax"`   // max raw value
+	NMax   int       `json:"max"`    // max normalized value
+	Scale  []string  `json:"scale"`  // yaxis labels
+	Values []int     `json:"values"` // pixel values
+	Type   string    `json:"type"`
+	Title  string    `json:"title"`
 }
 
 // Options contains configuration for a single dataset.
 type Options struct {
-	Type  string
+	// Type specified the chart type to plot. Can be either "area" of "line".
+	// By default "area" is used.
+	Type string
+
+	// Title to display on top of the chart.
 	Title string
+
+	// Gap is the % of space between bar charts, of the number of datapoints
+	// supplied is smaller than the chart width. I.e. plotting 30 values with
+	// a chart width of 300 and a Gap of 0.1 plots 30 individual bar chart
+	// value with a thickness of 24px with 2 * 10% (left & right) space in between.
+	// By default the Gap is 0.00.
+	Gap float64
 }
 
 // NewData creates a new dataset from []float64.
 func NewData(opt *Options, in []float64) Data {
-	return Data{Type: opt.Type, Title: opt.Title, raw: in}
+	return Data{Type: opt.Type, Title: opt.Title, gap: opt.Gap, raw: in}
 }
 
 // Len returns the number of items in the dataset.
