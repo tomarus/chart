@@ -106,7 +106,7 @@ func (c *Chart) AddData(opt *data.Options, d []float64) (err error) {
 
 // NewChart initializes a new svg chart.
 func NewChart(o *Options) (*Chart, error) {
-	c := &Chart{title: o.Title, marginx: 48, marginy: 20, image: o.Image, writer: o.W}
+	c := &Chart{title: o.Title, marginx: 48, marginy: 20, image: o.Image, writer: o.W, data: data.Collection{}}
 
 	if o.Size == "big" {
 		c.width = 1440
@@ -138,9 +138,9 @@ func NewChart(o *Options) (*Chart, error) {
 	c.end = float64(o.End * 1000.0)
 
 	if o.Scheme != "" {
-		c.palette = palette.NewPalette(o.Scheme, o.Theme)
+		c.palette, _ = palette.NewPalette(o.Scheme, o.Theme)
 	} else {
-		c.palette = palette.NewPalette("white")
+		c.palette, _ = palette.NewPalette("white")
 	}
 	return c, nil
 }

@@ -60,7 +60,7 @@ func TestChart(t *testing.T) {
 	opts.Size = "auto"
 	opts.Scheme = ""
 	c, _ = NewChart(opts)
-	if c.palette.GetHexColor("background") != "#fff" {
+	if c.palette.GetHexColor("background") != "#ffffff" {
 		t.Fatal("default scheme should be white")
 	}
 

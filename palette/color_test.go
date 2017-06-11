@@ -19,12 +19,13 @@ func TestConvert(t *testing.T) {
 func TestParseColor(t *testing.T) {
 	var testParse = []struct {
 		in  string
-		out color.Color
+		out color.RGBA
 	}{
 		{"#fff", color.RGBA{255, 255, 255, 255}},
 		{"#123", color.RGBA{17, 34, 51, 255}},
 		{"#f0c0a0", color.RGBA{240, 192, 160, 255}},
 		{"#01f203", color.RGBA{1, 242, 3, 255}},
+		{"#01f20380", color.RGBA{1, 242, 3, 128}},
 	}
 
 	for _, tp := range testParse {
@@ -32,7 +33,7 @@ func TestParseColor(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if res != tp.out {
+		if *res != tp.out {
 			t.Errorf("%s does not match %v, got %v", tp.in, tp.out, res)
 		}
 	}

@@ -39,20 +39,20 @@ func (svg *SVG) Start(wr io.Writer, w, h, mx, my, start, end int, p *palette.Pal
 
 func (svg *SVG) Graph(d data.Collection) {
 	svg.p(`<defs>`)
+	{
+		svg.p(`<script type="text/javascript"><![CDATA[`)
+		svg.p("const w=%d,h=%d,mx=%d,my=%d,start=%d,end=%d", svg.width, svg.height, svg.marginx, svg.marginy, svg.start, svg.end)
+		jsdata, _ := json.Marshal(d)
+		svg.p("const data=" + string(jsdata))
+		fmt.Fprint(svg.w, js)
+		svg.p("]]></script>")
 
-	svg.p(`<script type="text/javascript"><![CDATA[`)
-	svg.p("const w=%d,h=%d,mx=%d,my=%d,start=%d,end=%d", svg.width, svg.height, svg.marginx, svg.marginy, svg.start, svg.end)
-	jsdata, _ := json.Marshal(d)
-	svg.p("const data=" + string(jsdata))
-	fmt.Fprint(svg.w, js)
-	svg.p("]]></script>")
-
-	for i := range d {
-		svg.p(`<g id="path%d">`, i+1)
-		svg.p(`<path style="fill: none; stroke: %s; shape-rendering: crispEdges" d="M0,0"/>`, svg.pal.GetHexAxisColor(i))
-		svg.p(`</g>`)
+		for i := range d {
+			svg.p(`<g id="path%d">`, i+1)
+			svg.p(`<path style="fill: none; stroke: %s; shape-rendering: crispEdges" d="M0,0"/>`, svg.pal.GetHexAxisColor(i))
+			svg.p(`</g>`)
+		}
 	}
-
 	fmt.Fprintln(svg.w, `</defs>`)
 
 	for i := range d {
@@ -70,7 +70,7 @@ func (svg *SVG) Graph(d data.Collection) {
 }
 
 func (svg *SVG) drawMA() {
-	const maColor = "color3"
+	const maColor = "marker"
 	fmt.Fprintln(svg.w, `<defs>`)
 	svg.p(`<g id="ma">`)
 	svg.p(`<path style="fill: none; stroke: %s; stroke-width: 2; shape-rendering: auto" d="M0,0"/>`, svg.pal.GetHexColor(maColor))

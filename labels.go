@@ -1,8 +1,6 @@
 package chart
 
-import (
-	"time"
-)
+import "time"
 
 // xlabels creates n time labels for use on the x axis.
 func (c *Chart) xlabels(n int) []string {

@@ -3,6 +3,7 @@ package png
 import (
 	"fmt"
 	"image"
+	"image/color"
 	"image/draw"
 	pngo "image/png"
 	"io"
@@ -22,7 +23,7 @@ type PNG struct {
 	marginx, marginy int
 	start, end       int
 	pal              *palette.Palette
-	img              *image.Paletted
+	img              *image.RGBA
 }
 
 func New() *PNG {
@@ -45,7 +46,7 @@ func (png *PNG) End() error {
 }
 
 func (png *PNG) Graph(d data.Collection) {
-	png.img = image.NewPaletted(image.Rect(0, 0, png.width+png.marginx+4, png.height+(2*png.marginy)+(d.Len()*16)), png.pal.Palette)
+	png.img = image.NewRGBA(image.Rect(0, 0, png.width+png.marginx+4, png.height+(2*png.marginy)+(d.Len()*16)))
 
 	bg := image.NewUniform(png.pal.GetColor("background"))
 	draw.Draw(png.img, png.img.Bounds(), bg, image.ZP, draw.Src)
@@ -90,24 +91,32 @@ func (png *PNG) EndID() {
 }
 
 func (png *PNG) Line(color string, x1, y1, x2, y2 int) {
+	ruler := png.pal.GetColor(color)
+	if color == "grid" {
+		// This is just a HACK to draw transparent grid lines.
+		// Doesn't really work as expected.
+		newImg := image.NewRGBA(png.img.Bounds())
+		png.line(newImg, ruler, x1, y1, x2, y2, 2)
+		draw.Draw(png.img, png.img.Bounds(), newImg, image.ZP, draw.Over)
+		return
+	}
+	png.line(png.img, ruler, x1, y1, x2, y2, 1)
+}
+
+func (png *PNG) line(img *image.RGBA, color color.Color, x1, y1, x2, y2, skip int) {
 	if x2 < x1 {
 		x1, x2 = x2, x1
 	}
 	if y2 < y1 {
 		y1, y2 = y2, y1
 	}
-	skip := 1
-	if color == "grid" {
-		skip = 2
-	}
-	ruler := png.pal.GetColor(color)
 	if x1 == x2 {
 		for i := y1; i < y2; i += skip {
-			png.img.Set(x1, i, ruler)
+			img.Set(x1, i, color)
 		}
 	} else if y1 == y2 {
 		for i := x1; i < x2; i += skip {
-			png.img.Set(i, y1, ruler)
+			img.Set(i, y1, color)
 		}
 	}
 }
