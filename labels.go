@@ -4,7 +4,7 @@ import "time"
 
 // xlabels creates n time labels for use on the x axis.
 func (c *Chart) xlabels(n int) []string {
-	skip := (c.end - c.start) / float64(n)
+	skip := (c.end - c.start) / int64(n)
 	tdsave := ""
 	res := []string{}
 	b := c.start
@@ -13,11 +13,11 @@ func (c *Chart) xlabels(n int) []string {
 			b += skip
 			continue
 		}
-		td := time.Unix(int64(b/1000), 0).Format("01-02")
-		txt := time.Unix(int64(b/1000), 0).Format("15:04")
+		td := time.Unix(b, 0).Format("01-02")
+		txt := time.Unix(b, 0).Format("15:04")
 		if td != tdsave {
 			tdsave = td
-			txt = time.Unix(int64(b/1000), 0).Format("01-02 15:04")
+			txt = time.Unix(b, 0).Format("01-02 15:04")
 		}
 		res = append(res, txt)
 		b += skip

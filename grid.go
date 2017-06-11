@@ -1,7 +1,7 @@
 package chart
 
 // xgrid lays out the grid on the x axis and creates the labels.
-func (c *Chart) xgrid(x, y, n int, bt, et float64) {
+func (c *Chart) xgrid(x, y, n int, bt, et int64) {
 	off := (c.width / n) + x
 	for ix := 0; ix < n-1; ix++ {
 		nx := off + ((c.width / n) * ix)

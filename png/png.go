@@ -21,7 +21,7 @@ type PNG struct {
 	w                io.Writer
 	width, height    int
 	marginx, marginy int
-	start, end       int
+	start, end       int64
 	pal              *palette.Palette
 	img              *image.RGBA
 }
@@ -30,7 +30,7 @@ func New() *PNG {
 	return &PNG{}
 }
 
-func (png *PNG) Start(wr io.Writer, w, h, mx, my, start, end int, p *palette.Palette) {
+func (png *PNG) Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palette.Palette) {
 	png.w = wr
 	png.width = w
 	png.height = h

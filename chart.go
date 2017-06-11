@@ -12,7 +12,7 @@ import (
 
 // Image defines the interface for image (svg/png) backends.
 type Image interface {
-	Start(wr io.Writer, w, h, mx, my, start, end int, p *palette.Palette)
+	Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palette.Palette)
 	End() error
 	Graph(data.Collection)
 	Text(color, align string, x, y int, txt string)
@@ -27,7 +27,7 @@ type Image interface {
 type Chart struct {
 	width, height    int
 	marginx, marginy int
-	start, end       float64
+	start, end       int64
 	xdiv, ydiv       int
 	title            string
 	data             data.Collection
@@ -43,7 +43,7 @@ type Options struct {
 	Width, Height int       // overrides Size
 	Scheme        string    // palette colorscheme, default "white"
 	Theme         string    // if random scheme is used, set to "light" to use light colors, otherwise a dark theme is generated
-	Start, End    uint64    // start + end epoch of data
+	Start, End    int64     // start + end epoch of data
 	Xdiv, Ydiv    int       // num grid divisions (default x12 y5)
 	Image         Image     // the chart image type, chart.SVG{} or chart.PNG{}
 	W             io.Writer // output writer to write image to
@@ -60,7 +60,7 @@ func (c *Chart) Render() error {
 	c.data.Normalize(c.height)
 	sort.Sort(c.data)
 	c.scales(c.ydiv)
-	c.image.Start(c.writer, c.width, c.height, c.marginx, c.marginy, int(c.start), int(c.end), c.palette)
+	c.image.Start(c.writer, c.width, c.height, c.marginx, c.marginy, c.start, c.end, c.palette)
 	c.image.Graph(c.data)
 	c.xgrid(c.marginx, c.marginy, c.xdiv, c.start, c.end)
 	c.ygrid(c.marginx, c.marginy, c.ydiv)
@@ -134,8 +134,8 @@ func NewChart(o *Options) (*Chart, error) {
 		c.ydiv = o.Ydiv
 	}
 
-	c.start = float64(o.Start * 1000.0)
-	c.end = float64(o.End * 1000.0)
+	c.start = o.Start
+	c.end = o.End
 
 	if o.Scheme != "" {
 		c.palette, _ = palette.NewPalette(o.Scheme, o.Theme)

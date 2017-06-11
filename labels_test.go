@@ -29,8 +29,8 @@ var labelChart = Chart{
 func TestXLabels(t *testing.T) {
 	t0, _ := time.Parse("2006-01-02", "2017-01-01")
 	t1, _ := time.Parse("2006-01-02", "2017-01-30")
-	labelChart.start = float64(t0.Unix() * 1000)
-	labelChart.end = float64(t1.Unix() * 1000)
+	labelChart.start = t0.Unix()
+	labelChart.end = t1.Unix()
 	labelChart.width = 1440
 
 	labels := labelChart.xlabels(12)

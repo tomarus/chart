@@ -14,7 +14,7 @@ type SVG struct {
 	w                io.Writer
 	width, height    int
 	marginx, marginy int
-	start, end       int
+	start, end       int64
 	pal              *palette.Palette
 }
 
@@ -22,7 +22,7 @@ func New() *SVG {
 	return &SVG{}
 }
 
-func (svg *SVG) Start(wr io.Writer, w, h, mx, my, start, end int, p *palette.Palette) {
+func (svg *SVG) Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palette.Palette) {
 	svg.w = wr
 	svg.width = w
 	svg.height = h
@@ -41,7 +41,7 @@ func (svg *SVG) Graph(d data.Collection) {
 	svg.p(`<defs>`)
 	{
 		svg.p(`<script type="text/javascript"><![CDATA[`)
-		svg.p("const w=%d,h=%d,mx=%d,my=%d,start=%d,end=%d", svg.width, svg.height, svg.marginx, svg.marginy, svg.start, svg.end)
+		svg.p("const w=%d,h=%d,mx=%d,my=%d,start=%d,end=%d", svg.width, svg.height, svg.marginx, svg.marginy, svg.start*1000, svg.end*1000)
 		jsdata, _ := json.Marshal(d)
 		svg.p("const data=" + string(jsdata))
 		fmt.Fprint(svg.w, js)
@@ -63,7 +63,7 @@ func (svg *SVG) Graph(d data.Collection) {
 	svg.p(`<line id="markery" x1="%d" x2="%d" y1="0" y2="0" class="marker" style="visibility:hidden"/>`, svg.marginx, svg.width+svg.marginx)
 	svg.p(`<line id="markerx2" x1="0" x2="0" y1="%d" y2="%d" class="marker" style="visibility:hidden"/>`, svg.marginy, svg.height+svg.marginy)
 	svg.p(`<line id="markery2" x1="%d" x2="%d" y1="0" y2="0" class="marker" style="visibility:hidden"/>`, svg.marginx, svg.width+svg.marginx)
-	svg.p(`<rect id="markersel" x="0" y="0" width="0" height="0" class="" style='fill-opacity:.5;fill:%s'/>`, svg.pal.GetHexColor("select"))
+	svg.p(`<rect id="markersel" x="0" y="0" width="0" height="0" class="" style='fill-opacity:.25;fill:%s'/>`, svg.pal.GetHexColor("select"))
 	svg.p(`<text class="title" id="markertext" x="%d" y="%d" />`, svg.marginx, svg.marginy/2+4)
 
 	svg.drawMA()
@@ -140,7 +140,7 @@ func (svg *SVG) svgHead(w, h int) {
 
 func (svg *SVG) svgCSS(p *palette.Palette) {
 	svg.p(`<defs><style type="text/css"><![CDATA[`)
-	svg.p(".grid { stroke: %s; stroke-opacity: .62; stroke-dasharray: 1; stroke-width: 0.25 }", p.GetHexColor("grid"))
+	svg.p(".grid { stroke: %s; stroke-opacity: .33; stroke-dasharray: 1; stroke-width: 1 }", p.GetHexColor("grid"))
 	svg.p(".title { fill: %s; font-size: 11px; font-family: menlo; fill-opacity:1; stroke-width: 0 }", p.GetHexColor("title"))
 	svg.p(".border { stroke: %s; stroke-opacity: 1; stroke-width: 1; fill: none }", p.GetHexColor("border"))
 	svg.p(".marker { stroke: %s; stroke-opacity: 1; stroke-width: 1 }", p.GetHexColor("marker"))

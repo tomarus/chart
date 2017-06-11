@@ -23,8 +23,8 @@ func TestChart(t *testing.T) {
 		Size:   "small",
 		Scheme: "random",
 		Theme:  "light",
-		Start:  uint64(time.Now().AddDate(0, 0, -1).Unix()),
-		End:    uint64(time.Now().Unix()),
+		Start:  time.Now().AddDate(0, 0, -1).Unix(),
+		End:    time.Now().Unix(),
 		Xdiv:   12,
 		Ydiv:   5,
 		W:      w,
@@ -116,8 +116,8 @@ func testimg(img Image) {
 		Size:   "small",
 		Scheme: "white",
 		Theme:  "light",
-		Start:  uint64(time.Now().AddDate(0, 0, -1).Unix()),
-		End:    uint64(time.Now().Unix()),
+		Start:  time.Now().AddDate(0, 0, -1).Unix(),
+		End:    time.Now().Unix(),
 		Xdiv:   12,
 		Ydiv:   5,
 		W:      w,
@@ -148,8 +148,8 @@ func Example() {
 		Height: 300,       // Defaults to -1, when size=auto height is set to width/4, otherwise set fixed height
 		Width:  900,       // If a width is supplied, height is implied and both are used in stead of size setting
 		Scheme: "white",   // or black/random/pink/solarized or hsl:180,0.5,0.25
-		Start:  uint64(time.Now().AddDate(0, 0, -1).Unix()),
-		End:    uint64(time.Now().Unix()),
+		Start:  time.Now().AddDate(0, 0, -1).Unix(),
+		End:    time.Now().Unix(),
 		Xdiv:   12,
 		Ydiv:   5,
 		W:      os.Stdout,
