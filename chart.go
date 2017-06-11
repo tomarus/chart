@@ -1,4 +1,4 @@
-// Package chart generates interactive svg charts from time series data.
+// Package chart generates interactive svg or png charts from time series data.
 package chart
 
 import (
@@ -12,15 +12,33 @@ import (
 
 // Image defines the interface for image (svg/png) backends.
 type Image interface {
+	// Start initializes a new image and sets the defaults.
 	Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palette.Palette)
+
+	// End finishes and writes the image to the output writer.
 	End() error
+
+	// Graph renders all chart dataset values to the visible chart area.
 	Graph(data.Collection)
+
+	// Text writes a string to the image.
 	Text(color, align string, x, y int, txt string)
-	ID(id string)
-	EndID()
+
+	// Line draws a line between two points. The current implementations need to
+	// only draw horizontal or vertical lines.
 	Line(color string, x1, y1, x2, y2 int)
+
+	// Legend draws the image specific legend.
 	Legend(data.Collection, *palette.Palette)
+
+	// Border draws a border around the chart area.
 	Border(x, y, w, h int)
+
+	// ID is used to mark the start of the grid so svg/js can manipulate this.
+	ID(id string)
+
+	// EndID marks the end of the ID block specified earlier.
+	EndID()
 }
 
 // Chart is the main chart type used for all operations.

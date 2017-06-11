@@ -10,6 +10,7 @@ import (
 	"github.com/tomarus/chart/palette"
 )
 
+// SVG implements the chart interface to write SVG images.
 type SVG struct {
 	w                io.Writer
 	width, height    int
@@ -18,10 +19,12 @@ type SVG struct {
 	pal              *palette.Palette
 }
 
+// New initializes a new svg chart image writer.
 func New() *SVG {
 	return &SVG{}
 }
 
+// Start initializes a new image and sets the defaults.
 func (svg *SVG) Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palette.Palette) {
 	svg.w = wr
 	svg.width = w
@@ -37,6 +40,7 @@ func (svg *SVG) Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palet
 	svg.p(`<rect class="background" x="0" y="0" width="%d" height="%d"/>`, w+mx+32, h+(2*my))
 }
 
+// Graph renders all chart dataset values to the visible chart area.
 func (svg *SVG) Graph(d data.Collection) {
 	svg.p(`<defs>`)
 	{
@@ -82,6 +86,7 @@ func (svg *SVG) drawMA() {
 	svg.p(`<rect id="mabut" x="%d" y="%d" width="12" height="12" style="visibility:normal;fill:%s"/>`, svg.width+svg.marginx-12, y, svg.pal.GetHexColor(maColor))
 }
 
+// Text writes a string to the image.
 func (svg *SVG) Text(color, align string, x, y int, txt string) {
 	anchor := ""
 	switch align {
@@ -95,14 +100,17 @@ func (svg *SVG) Text(color, align string, x, y int, txt string) {
 	svg.p(`<g class="%s"><text style="%s" x="%d" y="%d">%s</text></g>`, color, anchor, x, y, txt)
 }
 
+// ID is used to mark the start of the grid so svg/js can manipulate this.
 func (svg *SVG) ID(id string) {
 	svg.p(`<g id="%s">`, id)
 }
 
+// EndID marks the end of the ID block specified earlier.
 func (svg *SVG) EndID() {
 	svg.p(`</g>`)
 }
 
+// Line draws a line between two points.
 func (svg *SVG) Line(color string, x1, y1, x2, y2 int) {
 	svg.p(`<line class="%s" x1="%d" y1="%d" x2="%d" y2="%d"/>`, color, x1, y1, x2, y2)
 }
@@ -120,11 +128,13 @@ func (svg *SVG) Legend(d data.Collection, p *palette.Palette) {
 	svg.p(`</g>`)
 }
 
+// End finishes and writes the image to the output writer.
 func (svg *SVG) End() error {
 	svg.p(`</svg>`)
 	return nil
 }
 
+// Border draws a border around the chart area.
 func (svg *SVG) Border(x, y, w, h int) {
 	svg.svgRect(x, y, w, h, "border")
 }

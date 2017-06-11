@@ -64,3 +64,4 @@ This project has just started and a lot of stuf is still missing or incomplete.
 This is a small list of ideas/todos:
 * Custom lines and markers, like 95th percentile line, downtime markers, etc
 * Complete legends and dataset descriptions
+* Support negative values

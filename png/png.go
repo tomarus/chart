@@ -26,10 +26,12 @@ type PNG struct {
 	img              *image.RGBA
 }
 
+// New initializes a new png chart image writer.
 func New() *PNG {
 	return &PNG{}
 }
 
+// Start initializes a new image and sets the defaults.
 func (png *PNG) Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palette.Palette) {
 	png.w = wr
 	png.width = w
@@ -41,10 +43,12 @@ func (png *PNG) Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palet
 	png.pal = p
 }
 
+// End finishes and writes the image to the output writer.
 func (png *PNG) End() error {
 	return pngo.Encode(png.w, png.img)
 }
 
+// Graph renders all chart dataset values to the visible chart area.
 func (png *PNG) Graph(d data.Collection) {
 	png.img = image.NewRGBA(image.Rect(0, 0, png.width+png.marginx+4, png.height+(2*png.marginy)+(d.Len()*16)))
 
@@ -63,6 +67,7 @@ func (png *PNG) Graph(d data.Collection) {
 	}
 }
 
+// Text writes a string to the image.
 func (png *PNG) Text(col, align string, x, y int, txt string) {
 	fill := image.NewUniform(png.pal.GetColor("title")) // Palette[2])
 	d := &font.Drawer{
@@ -84,12 +89,15 @@ func (png *PNG) Text(col, align string, x, y int, txt string) {
 	d.DrawString(txt)
 }
 
+// ID is not used in the png implementation.
 func (png *PNG) ID(id string) {
 }
 
+// EndID is not used in the png implementation.
 func (png *PNG) EndID() {
 }
 
+// Line draws a line between the points.
 func (png *PNG) Line(color string, x1, y1, x2, y2 int) {
 	ruler := png.pal.GetColor(color)
 	if color == "grid" {
@@ -127,6 +135,7 @@ func (png *PNG) rectFill(color string, x1, y1, w, h int) {
 	}
 }
 
+// Legend draws the image specific legend.
 func (png *PNG) Legend(d data.Collection, p *palette.Palette) {
 	x := png.marginx
 	y := png.height + png.marginy + 4
@@ -150,6 +159,7 @@ func (png *PNG) Legend(d data.Collection, p *palette.Palette) {
 	}
 }
 
+// Border draws a border around the chart area.
 func (png *PNG) Border(x, y, w, h int) {
 	c := "border"
 	png.Line(c, x, y, x+w, y)
