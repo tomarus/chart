@@ -9,7 +9,7 @@ Dead simple rrd like bandwidth charts with focus on pixel perfect rendering of s
 
 Written in Go, the output can either be an interactive SVG chart or a static PNG image.
 
-It was written to be able to show tens or hundreds of charts in seconds without interactivity in mind. It's main purpose lives on simple static administrative dashboards.
+It was written to be able to show tens or hundreds of charts in seconds without interactivity in mind.
 
 The SVG image allows basic analytics to be performed on the chart, like measurements of time or volume, showing/hiding datasets and showing a weighted moving average on demand.
 
@@ -24,6 +24,10 @@ Example screenshot:
 [View as interactive SVG](http://s.chiparus.org/6/6b15c5349e894fe9.svg)
 
 ![Example Screenshot](http://s.chiparus.org/5/5caa4e08e4b2edb3.png)
+
+Screenshot from the example website:
+
+![Screenshot from example website](http://s.chiparus.org/0/0cccf53f0ca630ff.png)
 
 Example of useless but interesting random colors:
 
