@@ -25,13 +25,13 @@ Example screenshot:
 
 ![Example Screenshot](http://s.chiparus.org/5/5caa4e08e4b2edb3.png)
 
-Screenshot from the example website:
+Screenshots from the example website:
 
-![Screenshot from example website](http://s.chiparus.org/3/3a23cff5f7c2c704.png)
+![Basics from example website](http://s.chiparus.org/3/3a23cff5f7c2c704.png)
 
-Example of useless but interesting random colors:
+![Schemes from example website](http://s.chiparus.org/3/314100270668719e.png)
 
-![Example of totally useless random colors](http://s.chiparus.org/3/39fb8c208833903a.png)
+![Randome schemes from example website](http://s.chiparus.org/a/a24b90eee8db7c63.png)
 
 ## Example Usage
 
