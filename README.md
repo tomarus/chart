@@ -27,7 +27,7 @@ Example screenshot:
 
 Screenshot from the example website:
 
-![Screenshot from example website](http://s.chiparus.org/0/0cccf53f0ca630ff.png)
+![Screenshot from example website](http://s.chiparus.org/3/3a23cff5f7c2c704.png)
 
 Example of useless but interesting random colors:
 
