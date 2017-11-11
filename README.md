@@ -5,10 +5,17 @@
 
 # Go Chart Lib
 
-Dead simple rrd like interactive svg graphs with focus on pixel perfect rendering of source data.
+Dead simple rrd like bandwidth charts with focus on pixel perfect rendering of source data.
 
-Written in Go, the output is a SVG image containing Javascript which does most rendering and selection magic.
-Additionally a static png image can be written.
+Written in Go, the output can either be an interactive SVG chart or a static PNG image.
+
+It was written to be able to show tens or hundreds of charts in seconds without interactivity in mind. It's main purpose lives on simple static administrative dashboards.
+
+The SVG image allows basic analytics to be performed on the chart, like measurements of time or volume, showing/hiding datasets and showing a weighted moving average on demand.
+
+Source data can be upsampled using a simple stretch method (bar charts) or downsampled using the largest triangle three buckets algorithm.
+
+The javascript embedded in the SVG image does not have any dependencies.
 
 ## Examples
 
@@ -16,13 +23,19 @@ Example screenshot:
 
 [View as interactive SVG](http://s.chiparus.org/6/6b15c5349e894fe9.svg)
 
-![Example Spngcreenshot](http://s.chiparus.org/5/5caa4e08e4b2edb3.png)
+![Example Screenshot](http://s.chiparus.org/5/5caa4e08e4b2edb3.png)
 
 Example of useless but interesting random colors:
 
-![Example of totally useless random colors](http://s.chiparus.org/7/7b2fd43470e2475b.png)
+![Example of totally useless random colors](http://s.chiparus.org/3/39fb8c208833903a.png)
 
 ## Example Usage
+
+```
+go get github.com/tomarus/chart 
+go run $GOPATH/src/github.com/tomarus/chart/examples/main.go
+open http://localhost:3000
+```
 
 ```go
 import (
@@ -37,16 +50,18 @@ opts := &chart.Options{
     Scheme: "white",   // or black/random/pink/solarized or hsl:180,0.5,0.25
     Start:  start_epoch,
     End:    end_epoch,
-    Xdiv:   12,
-    Ydiv:   5,
     W:      w,
+    Axes: []*axis.Axis{
+        axis.NewTime(axis.Bottom, "Mon 15:04").Duration(8 * time.Hour).Grid(4),
+        axis.NewSI(axis.Left).Ticks(4).Grid(2),
+    },
 }
 c, err := chart.NewChart(opts)
 if err != nil {
     panic(err)
 }
-warn := c.AddData(&data.Options{Type: "area", Title: "My Data Description"}, []yourData)
-if err != nil {
+warn := c.AddData(&data.Options{Title: "My Data Description"}, []yourData)
+if warn != nil {
     fmt.Println(warn)
 }
 w.Header().Set("Content-Type", "image/svg+xml")
@@ -55,13 +70,12 @@ c.Render()
 
 ## Notes
 
-This is an experimental work in progress for educational and research purposes only.
+This is an experimental work in progress for my own personal educational and research purposes.
 
-This project has very few Go dependencies and no Javascript dependencies. Only freetype and image/font is used for png output.
+This project has just started and a lot of stuf is still missing or incomplete. The API will not be stable until 1.0.0 is tagged in git.
 
-This project has just started and a lot of stuf is still missing or incomplete.
-
-This is a small list of ideas/todos:
+This is a small list of ideas, todos and limitations:
 * Custom lines and markers, like 95th percentile line, downtime markers, etc
-* Complete legends and dataset descriptions
-* Support negative values
+* Add support negative values
+* It supports only area charts atm
+* Only 4 sources per chart supported currently

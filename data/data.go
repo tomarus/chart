@@ -15,7 +15,7 @@ type Data struct {
 // Options contains configuration for a single dataset.
 type Options struct {
 	// Type specified the chart type to plot. Can be either "area" of "line".
-	// By default "area" is used.
+	// By default "area" is used. XXX Note that line isn't really supported.
 	Type string
 
 	// Title to display on top of the chart.
@@ -60,12 +60,7 @@ func (d *Data) MinMaxAvg() (float64, float64, float64) {
 
 // Normalize normalizes the raw/tsm values to height.
 func (d *Data) normalize(height int) {
-	d.Max = 0.
-	for _, v := range d.raw {
-		if d.Max < v {
-			d.Max = v
-		}
-	}
+	_, d.Max, _ = d.MinMaxAvg()
 
 	if d.Max == 0 {
 		// we have an empty dataset

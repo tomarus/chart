@@ -172,11 +172,11 @@ function line(n, max, fmax) {
 function graph(t, p, n, max, fmax) {
 	for (let i=0; i<Math.min(w, data[n].values.length); i++) {
 		let v = norm(data[n].values[i], max, fmax)
-		if (t === 'line') {
-			p += 'L'+i+','+(h-v)
-		} else {
+		// if (t === 'line') {
+		// 	p += 'L'+i+','+(h-v)
+		// } else {
 			p += 'M'+i+','+(h-v)+'v'+v
-		}
+		// }
 	}
 	document.getElementById(id(n)).firstElementChild.setAttribute('d', p)
 }

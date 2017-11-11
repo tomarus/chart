@@ -4,8 +4,8 @@ import "testing"
 
 func TestDefaultPalette(t *testing.T) {
 	pal, _ := NewPalette("") // defaults to "white"
-	if len(pal.palette) != 10 {
-		t.Fatal("len(pal) != 10")
+	if len(pal.palette) != 12 {
+		t.Fatal("len(pal) != 12")
 	}
 	if col2hex(pal.GetColor("background")) != "#ffffff" {
 		t.Error("Expected white")
@@ -14,28 +14,28 @@ func TestDefaultPalette(t *testing.T) {
 
 func TestPalette(t *testing.T) {
 	pal, _ := NewPalette("black")
-	if len(pal.palette) != 10 {
-		t.Fatal("len(pal) != 10")
+	if len(pal.palette) != 12 {
+		t.Fatal("len(pal) != 12")
 	}
 
 	h := pal.GetHexColor("grid")
-	if h != "#404040" {
-		t.Errorf("Unexpected hex grid color (%v) should be #404040", h)
+	if h != "#999999" {
+		t.Errorf("Unexpected hex grid color (%v) should be #999999", h)
 	}
 
 	c := pal.GetColor("grid")
-	if col2hex(c) != "#404040" {
+	if col2hex(c) != "#999999" {
 		t.Errorf("Unexpected grid color (%v) %s", c, col2hex(c))
 	}
 
 	c = pal.GetColor("doesnotexist")
-	if c != nil {
-		t.Error("Should be nil")
+	if c != unknownColor {
+		t.Error("Should be unknownColor")
 	}
 
 	ch := pal.GetHexAxisColor(1)
-	if ch != "#4444ff" {
-		t.Error("Axis 1 color should be #00f")
+	if ch != "#295135" {
+		t.Error("Axis 1 color should be #295135")
 	}
 
 	n := pal.GetAxisColorName(0)
@@ -46,8 +46,8 @@ func TestPalette(t *testing.T) {
 
 func TestRandom(t *testing.T) {
 	p, _ := NewPalette("random")
-	if len(p.palette) != 10 {
-		t.Errorf("Palette should have 10 entries.")
+	if len(p.palette) != 12 {
+		t.Errorf("Palette should have 12 entries.")
 	}
 
 	p, _ = NewPalette("hsl:180,0.5,0.5")

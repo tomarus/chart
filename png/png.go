@@ -2,28 +2,30 @@ package png
 
 import (
 	"fmt"
-	"image"
 	"image/color"
-	"image/draw"
-	pngo "image/png"
 	"io"
 
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/basicfont"
-	"golang.org/x/image/math/fixed"
+	"golang.org/x/image/font/gofont/gomono"
+	"golang.org/x/image/font/gofont/gosmallcapsitalic"
 
+	"github.com/fogleman/gg"
+	"github.com/golang/freetype/truetype"
 	"github.com/tomarus/chart/data"
+	"github.com/tomarus/chart/format"
+	myimg "github.com/tomarus/chart/image"
 	"github.com/tomarus/chart/palette"
 )
 
 // PNG implements the chart interface to write PNG images.
 type PNG struct {
 	w                io.Writer
+	gg               *gg.Context
+	data             data.Collection
 	width, height    int
 	marginx, marginy int
 	start, end       int64
 	pal              *palette.Palette
-	img              *image.RGBA
 }
 
 // New initializes a new png chart image writer.
@@ -32,8 +34,9 @@ func New() *PNG {
 }
 
 // Start initializes a new image and sets the defaults.
-func (png *PNG) Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palette.Palette) {
+func (png *PNG) Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palette.Palette, d data.Collection) {
 	png.w = wr
+	png.data = d
 	png.width = w
 	png.height = h
 	png.marginx = mx
@@ -45,18 +48,16 @@ func (png *PNG) Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palet
 
 // End finishes and writes the image to the output writer.
 func (png *PNG) End() error {
-	return pngo.Encode(png.w, png.img)
+	return png.gg.EncodePNG(png.w)
 }
 
 // Graph renders all chart dataset values to the visible chart area.
-func (png *PNG) Graph(d data.Collection) {
-	png.img = image.NewRGBA(image.Rect(0, 0, png.width+png.marginx+4, png.height+(2*png.marginy)+(d.Len()*16)))
+func (png *PNG) Graph() {
+	png.gg = gg.NewContext(png.width+png.marginx+4, png.height+(2*png.marginy)+((png.data.Len()+1)*16))
+	png.gg.SetColor(png.pal.GetColor("background"))
+	png.gg.Clear()
 
-	bg := image.NewUniform(png.pal.GetColor("background"))
-	draw.Draw(png.img, png.img.Bounds(), bg, image.ZP, draw.Src)
-
-	for pt := range d {
-		data := d[pt]
+	for pt, data := range png.data {
 		col := png.pal.GetAxisColorName(pt)
 		a := float64(data.NMax) / float64(png.height)
 		b := float64(data.NMax) - a*float64(png.height)
@@ -67,51 +68,71 @@ func (png *PNG) Graph(d data.Collection) {
 	}
 }
 
-// Text writes a string to the image.
-func (png *PNG) Text(col, align string, x, y int, txt string) {
-	fill := image.NewUniform(png.pal.GetColor("title")) // Palette[2])
-	d := &font.Drawer{
-		Dst:  png.img,
-		Src:  fill,
-		Face: basicfont.Face7x13,
-		Dot: fixed.Point26_6{
-			X: fixed.I(x),
-			Y: fixed.I(y),
-		},
+// face returns the font face to use. If the role is set to "title" a larger font is used.
+func (png *PNG) face(role myimg.TextRole) {
+	var ttfont *truetype.Font
+	size := 13.
+	dpi := 72.
+	h := font.HintingNone
+
+	if role == myimg.GridRole {
+		f, err := truetype.Parse(gomono.TTF)
+		if err != nil {
+			panic(err)
+		}
+		ttfont = f
+	} else {
+		f, err := truetype.Parse(gosmallcapsitalic.TTF)
+		if err != nil {
+			panic(err)
+		}
+		ttfont = f
+		size = 16.
 	}
 
+	face := truetype.NewFace(ttfont, &truetype.Options{
+		Size:    size,
+		DPI:     dpi,
+		Hinting: h,
+	})
+	png.gg.SetFontFace(face)
+}
+
+// Text writes a string to the image.
+func (png *PNG) Text(col, align string, role myimg.TextRole, x, y int, txt string) {
+	ax := 0.
 	switch align {
 	case "middle", "center":
-		d.Dot.X -= d.MeasureString(txt) / 2
+		ax = .5
 	case "end", "right":
-		d.Dot.X -= d.MeasureString(txt)
+		ax = 1
 	}
-	d.DrawString(txt)
+	png.gg.SetColor(png.pal.GetColor(col))
+	png.face(role)
+	png.gg.DrawStringAnchored(txt, float64(x), float64(y), ax, 0)
 }
 
-// ID is not used in the png implementation.
-func (png *PNG) ID(id string) {
+// TextID writes a string to the image.
+func (png *PNG) TextID(id, col, align string, role myimg.TextRole, x, y int, txt string) {
+	png.Text(col, align, role, x, y, txt)
 }
 
-// EndID is not used in the png implementation.
-func (png *PNG) EndID() {
-}
-
-// Line draws a line between the points.
+// Line draws a line between the points using the color name from the palette.
 func (png *PNG) Line(color string, x1, y1, x2, y2 int) {
 	ruler := png.pal.GetColor(color)
-	if color == "grid" {
-		// This is just a HACK to draw transparent grid lines.
-		// Doesn't really work as expected.
-		newImg := image.NewRGBA(png.img.Bounds())
-		png.line(newImg, ruler, x1, y1, x2, y2, 2)
-		draw.Draw(png.img, png.img.Bounds(), newImg, image.ZP, draw.Over)
-		return
+	if color == "grid" || color == "grid2" {
+		png.gg.SetDash(1)
+		png.gg.SetLineWidth(.5)
+		png.gg.DrawLine(float64(x1), float64(y1), float64(x2), float64(y2))
+		png.gg.SetColor(png.pal.GetColor(color))
+		png.gg.Stroke()
+	} else {
+		png.line(ruler, x1, y1, x2, y2, 1)
 	}
-	png.line(png.img, ruler, x1, y1, x2, y2, 1)
 }
 
-func (png *PNG) line(img *image.RGBA, color color.Color, x1, y1, x2, y2, skip int) {
+func (png *PNG) line(color color.Color, x1, y1, x2, y2, skip int) {
+	png.gg.SetColor(color)
 	if x2 < x1 {
 		x1, x2 = x2, x1
 	}
@@ -120,11 +141,11 @@ func (png *PNG) line(img *image.RGBA, color color.Color, x1, y1, x2, y2, skip in
 	}
 	if x1 == x2 {
 		for i := y1; i < y2; i += skip {
-			img.Set(x1, i, color)
+			png.gg.SetPixel(x1, i)
 		}
 	} else if y1 == y2 {
 		for i := x1; i < x2; i += skip {
-			img.Set(i, y1, color)
+			png.gg.SetPixel(i, y1)
 		}
 	}
 }
@@ -136,26 +157,27 @@ func (png *PNG) rectFill(color string, x1, y1, w, h int) {
 }
 
 // Legend draws the image specific legend.
-func (png *PNG) Legend(d data.Collection, p *palette.Palette) {
+func (png *PNG) Legend() {
 	x := png.marginx
 	y := png.height + png.marginy + 4
 
-	maxstrlen := 0
-	for i := range d {
-		if len(d[i].Title) >= maxstrlen {
-			maxstrlen = len(d[i].Title)
-		}
-	}
-	for i := range d {
-		png.rectFill(p.GetAxisColorName(i), x, y+16+(i*16), 12, 12)
+	q := "Min     Max     Avg"
+	png.Text("title2", "right", myimg.GridRole, x+png.width, y+26, q)
+	y += 16
 
-		min, max, avg := d[i].MinMaxAvg()
-		mmax := data.FormatSI(max, 1, 1000, "", "", "")
-		mmin := data.FormatSI(min, 1, 1000, "", "", "")
-		mavg := data.FormatSI(avg, 1, 1000, "", "", "")
-		q := fmt.Sprintf("%%-%ds    Max: %%6s    Avg: %%6s    Min: %%6s", maxstrlen)
-		s := fmt.Sprintf(q, d[i].Title, mmax, mavg, mmin)
-		png.Text("title", "left", x+20, y+26+(i*16), s)
+	for i, d := range png.data {
+		png.rectFill(png.pal.GetAxisColorName(i), x, y+16, 12, 12)
+
+		min, max, avg := d.MinMaxAvg()
+		// FIXME use axis formatters for this.
+		mmax := format.SI(max, 1, 1000, "", "", "")
+		mmin := format.SI(min, 1, 1000, "", "", "")
+		mavg := format.SI(avg, 1, 1000, "", "", "")
+		q := fmt.Sprintf("%6s  %6s  %6s", mmin, mmax, mavg)
+		png.Text("title", "left", myimg.GridRole, x+20, y+26, d.Title)
+		png.Text("title", "right", myimg.GridRole, x+png.width, y+26, q)
+		png.Line("grid2", x, y+26+3, x+png.width, y+26+3)
+		y += 16
 	}
 }
 

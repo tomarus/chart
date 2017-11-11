@@ -14,6 +14,9 @@ func (d *Data) Resample(width int) {
 
 // stretch stretches the raw array into a new width.
 // It just stretches using the same values without any interpolation.
+// If Data has a gap specified, a gap amount % of whitespace
+// will be added between the bars using 0 values. The gap % is
+// present on both the left and right side of a bar.
 func (d *Data) stretch(width int) []float64 {
 	newdata := make([]float64, width)
 	max := len(d.raw)

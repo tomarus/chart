@@ -8,7 +8,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tomarus/chart/axis"
 	"github.com/tomarus/chart/data"
+	"github.com/tomarus/chart/image"
 	"github.com/tomarus/chart/png"
 	"github.com/tomarus/chart/svg"
 )
@@ -25,9 +27,11 @@ func TestChart(t *testing.T) {
 		Theme:  "light",
 		Start:  time.Now().AddDate(0, 0, -1).Unix(),
 		End:    time.Now().Unix(),
-		Xdiv:   12,
-		Ydiv:   5,
-		W:      w,
+		Axes: []*axis.Axis{
+			axis.NewTime(axis.Bottom, "01-02 15:04").Ticks(12),
+			axis.NewSI(axis.Left).Ticks(5),
+		},
+		W: w,
 	}
 
 	// test sizes
@@ -66,12 +70,11 @@ func TestChart(t *testing.T) {
 
 	// test data
 
-	c.AddData(&data.Options{}, []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12})
+	c.AddData(&data.Options{Title: "testing"}, []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12})
 	if c.width != 12 {
 		// A width of 12px is actually unviewable
 		t.Errorf("Expected width of 10, got %d", c.width)
 	}
-	c.Render()
 
 	c, _ = NewChart(opts)
 	err = c.Render()
@@ -80,7 +83,7 @@ func TestChart(t *testing.T) {
 	}
 
 	c, _ = NewChart(opts)
-	c.AddData(&data.Options{}, []float64{1, 2, 3, 4, 5, 6})
+	c.AddData(&data.Options{Title: "testing"}, []float64{1, 2, 3, 4, 5, 6})
 	err = c.Render()
 	if err == nil {
 		t.Fatal("expected error xdiv <= datalen")
@@ -106,7 +109,7 @@ func TestChart(t *testing.T) {
 	// TODO: actually test png output somehow
 }
 
-func testimg(img Image) {
+func testimg(img image.Image) {
 	var out bytes.Buffer
 	w := bufio.NewWriter(&out)
 
@@ -118,9 +121,11 @@ func testimg(img Image) {
 		Theme:  "light",
 		Start:  time.Now().AddDate(0, 0, -1).Unix(),
 		End:    time.Now().Unix(),
-		Xdiv:   12,
-		Ydiv:   5,
-		W:      w,
+		Axes: []*axis.Axis{
+			axis.NewTime(axis.Bottom, "01-02 15:04").Duration(4 * time.Hour).Grid(4),
+			axis.NewSI(axis.Left).Ticks(4).Grid(2),
+		},
+		W: w,
 	}
 
 	c, _ := NewChart(opts)
@@ -140,19 +145,33 @@ func BenchmarkPNG(b *testing.B) {
 	}
 }
 
-func Example() {
+func ExampleChart() {
 	opts := &Options{
-		Title:  "Traffic",
+		Title:  "Title on top of the chart",
 		Image:  svg.New(), // or png.New()
 		Size:   "big",     // big is 1440px, small is 720px, auto is size of dataset
 		Height: 300,       // Defaults to -1, when size=auto height is set to width/4, otherwise set fixed height
 		Width:  900,       // If a width is supplied, height is implied and both are used in stead of size setting
 		Scheme: "white",   // or black/random/pink/solarized or hsl:180,0.5,0.25
+		Theme:  "light",   // default is dark.
 		Start:  time.Now().AddDate(0, 0, -1).Unix(),
 		End:    time.Now().Unix(),
-		Xdiv:   12,
-		Ydiv:   5,
 		W:      os.Stdout,
+		Axes: []*axis.Axis{
+			axis.NewTime(axis.Bottom, "01-02 15:04").Duration(4 * time.Hour).Grid(4),
+			axis.NewSI(axis.Left).Ticks(4).Grid(2),
+			//
+			// - Example custom time format
+			// axis.New(axis.Bottom, func(in float64) string {
+			//	return time.Unix(int64(in), 0).Format("01-02 15:04")
+			// 	return in.(time.Time).Format("2006-01-02")
+			// }).Duration(4 * time.Hour).Grid(),
+			//
+			// - Example other custom format
+			// axis.New(axis.Left, func(in float64) string {
+			// 	return fmt.Sprintf("%.1f", in/3.14)
+			// }).Ticks(5).Grid(),
+		},
 	}
 
 	c, err := NewChart(opts)

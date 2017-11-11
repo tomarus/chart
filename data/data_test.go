@@ -8,6 +8,7 @@ import (
 var testData = Collection{
 	NewData(&Options{"line", "", .05}, []float64{1, 2, 3, 4, 5}),
 	NewData(&Options{"area", "", .05}, []float64{10, 20, 30, 40, 50}),
+	NewData(&Options{"area", "", .05}, []float64{-1, -2, -3, -4, -5}),
 }
 
 func eq(a, b []int) bool {
@@ -57,6 +58,15 @@ func TestNormalize(t *testing.T) {
 	expect := []int{2, 4, 6, 8, 10}
 	if !eq(testData[0].Values, expect) {
 		t.Errorf("Expected %#v got %#v", expect, testData[0].Values)
+	}
+}
+
+func TestNormalizeNeg(t *testing.T) {
+	t.Skip("TODO")
+	testData[2].normalize(10)
+	expect := []int{2, 4, 6, 8, 10}
+	if !eq(testData[2].Values, expect) {
+		t.Errorf("Expected %#v got %#v max %f", expect, testData[2].Values, testData[2].Max)
 	}
 }
 

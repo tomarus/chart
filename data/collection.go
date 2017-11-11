@@ -18,9 +18,9 @@ func (c Collection) Normalize(limit int) {
 // max returns the max value of a Collection.
 func (c Collection) max() float64 {
 	max := 0.
-	for i := range c {
-		if max < c[i].Max {
-			max = c[i].Max
+	for _, cl := range c {
+		if max < cl.Max {
+			max = cl.Max
 		}
 	}
 	return max
