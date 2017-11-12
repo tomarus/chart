@@ -52,7 +52,7 @@ func (png *PNG) End() error {
 }
 
 // Graph renders all chart dataset values to the visible chart area.
-func (png *PNG) Graph() {
+func (png *PNG) Graph() error {
 	png.gg = gg.NewContext(png.width+png.marginx+4, png.height+(2*png.marginy)+((png.data.Len()+1)*16))
 	png.gg.SetColor(png.pal.GetColor("background"))
 	png.gg.Clear()
@@ -62,10 +62,14 @@ func (png *PNG) Graph() {
 		a := float64(data.NMax) / float64(png.height)
 		b := float64(data.NMax) - a*float64(png.height)
 		for i := range data.Values {
+			if data.Values[i] < 0 {
+				return fmt.Errorf("Negative values not supported")
+			}
 			v := int(float64(data.Values[i])*a + b)
 			png.Line(col, i+png.marginx, png.height+png.marginy, i+png.marginx, png.height-v+png.marginy)
 		}
 	}
+	return nil
 }
 
 // face returns the font face to use. If the role is set to "title" a larger font is used.

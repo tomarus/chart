@@ -55,7 +55,11 @@ func (c *Chart) Render() error {
 	}
 
 	c.image.Start(c.writer, c.width, c.height, c.marginx, c.marginy, c.start, c.end, c.palette, c.data)
-	c.image.Graph()
+
+	err := c.image.Graph()
+	if err != nil {
+		return err
+	}
 
 	c.axes[0].Draw(c.image, c.width, c.height, c.marginx, c.marginy, float64(c.start), float64(c.end))
 	c.axes[1].Draw(c.image, c.width, c.height, c.marginx, c.marginy, 0, c.data[0].Max)
@@ -75,7 +79,6 @@ func (c *Chart) drawTitle(width, height int) {
 }
 
 // AddData adds a single data set.
-// A warning is returned if the data is resampled or is empty.
 func (c *Chart) AddData(opt *data.Options, d []float64) (err error) {
 	if opt.Type == "" {
 		opt.Type = "area"
@@ -96,9 +99,7 @@ func (c *Chart) AddData(opt *data.Options, d []float64) (err error) {
 
 	if len(d) != c.width {
 		newdata.Resample(c.width)
-		err = fmt.Errorf("Resampling data from %d to %d", len(d), c.width)
 	}
-
 	c.data = append(c.data, newdata)
 	return err
 }

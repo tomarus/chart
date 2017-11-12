@@ -60,12 +60,15 @@ c, err := chart.NewChart(opts)
 if err != nil {
     panic(err)
 }
-warn := c.AddData(&data.Options{Title: "My Data Description"}, []yourData)
-if warn != nil {
-    fmt.Println(warn)
+err = c.AddData(&data.Options{Title: "My Data Description"}, []yourData)
+if err != nil {
+    panic(err)
 }
 w.Header().Set("Content-Type", "image/svg+xml")
-c.Render()
+err = c.Render()
+if err != nil {
+    panic(err)
+}
 ```
 
 ## Notes

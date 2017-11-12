@@ -27,7 +27,7 @@ type Image interface {
 	End() error
 
 	// Graph renders all chart dataset values to the visible chart area.
-	Graph()
+	Graph() error
 
 	// Text writes a string to the image.
 	Text(color, align string, role TextRole, x, y int, txt string)

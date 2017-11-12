@@ -101,6 +101,9 @@ func (a *Axis) Draw(img image.Image, w, h, mx, my int, min, max float64) {
 		off := 0 // grid line offset, TODO calculate from rounded time.Duration
 		if a.duration > 0 {
 			a.ticks = int(max-min) / int(a.duration/1e9)
+			if a.ticks == 0 {
+				a.ticks = 1
+			}
 		}
 		if a.grid > 0 {
 			t := a.ticks * a.grid

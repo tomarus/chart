@@ -52,7 +52,7 @@ func (svg *SVG) Start(wr io.Writer, w, h, mx, my int, start, end int64, p *palet
 }
 
 // Graph renders all chart dataset values to the visible chart area.
-func (svg *SVG) Graph() {
+func (svg *SVG) Graph() error {
 	svg.p(`<defs>`)
 	{
 		svg.p(`<script type="text/javascript"><![CDATA[`)
@@ -82,6 +82,7 @@ func (svg *SVG) Graph() {
 	svg.p(`<g class="title gridfont"><text id="markertext" x="%d" y="%d"/></g>`, svg.marginx, svg.marginy/2+4)
 
 	svg.drawMA()
+	return nil
 }
 
 func (svg *SVG) drawMA() {
