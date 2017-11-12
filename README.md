@@ -29,10 +29,6 @@ Screenshots from the example website:
 
 ![Basics from example website](http://s.chiparus.org/3/3a23cff5f7c2c704.png)
 
-![Schemes from example website](http://s.chiparus.org/3/314100270668719e.png)
-
-![Randome schemes from example website](http://s.chiparus.org/a/a24b90eee8db7c63.png)
-
 ## Example Usage
 
 ```
