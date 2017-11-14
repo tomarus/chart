@@ -29,7 +29,7 @@ func TestChart(t *testing.T) {
 		End:    time.Now().Unix(),
 		Axes: []*axis.Axis{
 			axis.NewTime(axis.Bottom, "01-02 15:04").Ticks(12),
-			axis.NewSI(axis.Left).Ticks(5),
+			axis.NewSI(axis.Left, 1000).Ticks(5),
 		},
 		W: w,
 	}
@@ -123,7 +123,7 @@ func testimg(img image.Image) {
 		End:    time.Now().Unix(),
 		Axes: []*axis.Axis{
 			axis.NewTime(axis.Bottom, "01-02 15:04").Duration(4 * time.Hour).Grid(4),
-			axis.NewSI(axis.Left).Ticks(4).Grid(2),
+			axis.NewSI(axis.Left, 1000).Ticks(4).Grid(2),
 		},
 		W: w,
 	}
@@ -159,7 +159,7 @@ func ExampleChart() {
 		W:      os.Stdout,
 		Axes: []*axis.Axis{
 			axis.NewTime(axis.Bottom, "01-02 15:04").Duration(4 * time.Hour).Grid(4),
-			axis.NewSI(axis.Left).Ticks(4).Grid(2),
+			axis.NewSI(axis.Left, 1000).Ticks(4).Grid(2),
 			//
 			// - Example custom time format
 			// axis.New(axis.Bottom, func(in float64) string {

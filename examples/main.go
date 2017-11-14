@@ -180,7 +180,7 @@ func drawChart(w http.ResponseWriter, r *http.Request, img image.Image, width in
 		W:      w,
 		Axes: []*axis.Axis{
 			axis.NewTime(axis.Bottom, "Mon 15:04").Duration(8 * time.Hour).Grid(4),
-			axis.NewSI(axis.Left).Ticks(4).Grid(2),
+			axis.NewSI(axis.Left, 1000).Ticks(4).Grid(2),
 		},
 		// Data: []data.Data{
 		// 	data.New(mksin(width, h1, 2, add1)).Title("dataset 1").Type("area").Gap(0),
@@ -210,7 +210,7 @@ func drawChartSmall(w http.ResponseWriter, r *http.Request, img image.Image) {
 		W:      w,
 		Axes: []*axis.Axis{
 			axis.NewTime(axis.Bottom, "02").Duration(1 * 86400 * time.Second).Grid(1).Center(),
-			axis.NewSI(axis.Left).Ticks(10).Grid(1),
+			axis.NewSI(axis.Left, 1000).Ticks(10).Grid(1),
 		},
 	}
 
@@ -232,7 +232,7 @@ func drawChartThemed(w http.ResponseWriter, r *http.Request, img image.Image, th
 		W:      w,
 		Axes: []*axis.Axis{
 			axis.NewTime(axis.Bottom, "Mon 15:04").Duration(8 * time.Hour).Grid(4),
-			axis.NewSI(axis.Left).Ticks(4).Grid(2),
+			axis.NewSI(axis.Left, 1000).Ticks(4).Grid(2),
 		},
 		// Data: []data.Data{
 		// 	data.New(mksin(width, h1, 2, add1)).Title("dataset 1").Type("area").Gap(0),

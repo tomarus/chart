@@ -45,9 +45,9 @@ func New(p Position, f Formatter) *Axis {
 }
 
 // NewSI creates a new Axis on the specified position using the default SI formatter.
-func NewSI(p Position) *Axis {
+func NewSI(p Position, base int) *Axis {
 	return New(p, func(in float64) string {
-		return format.SI(in, 1, 1000, "", "", "")
+		return format.SI(in, 1, float64(base), "", "", "")
 	})
 }
 
@@ -100,9 +100,10 @@ func (a *Axis) Draw(img image.Image, w, h, mx, my int, min, max float64) {
 	case Bottom:
 		off := 0 // grid line offset, TODO calculate from rounded time.Duration
 		if a.duration > 0 {
-			a.ticks = int(max-min) / int(a.duration/1e9)
-			if a.ticks == 0 {
-				a.ticks = 1
+			t := int(a.duration / time.Second)
+			a.ticks = 1
+			if t > 0 {
+				a.ticks = int(max-min) / t
 			}
 		}
 		if a.grid > 0 {
