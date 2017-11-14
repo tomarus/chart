@@ -31,11 +31,23 @@ Screenshots from the example website:
 
 ## Example Usage
 
+Example demo app:
+
 ```
 go get github.com/tomarus/chart 
 go run $GOPATH/src/github.com/tomarus/chart/examples/main.go
 open http://localhost:3000
 ```
+
+Example /proc monitoring app (linux only):
+
+```
+go get github.com/tomarus/chart
+go run $GOPATH/src/github.com/tomarus/chart/examples/sysmon/main.go
+open http://localhost:3001
+```
+
+Code example:
 
 ```go
 import (
