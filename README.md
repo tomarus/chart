@@ -65,7 +65,7 @@ opts := &chart.Options{
     W:      w,
     Axes: []*axis.Axis{
         axis.NewTime(axis.Bottom, "Mon 15:04").Duration(8 * time.Hour).Grid(4),
-        axis.NewSI(axis.Left).Ticks(4).Grid(2),
+        axis.NewSI(axis.Left, 1000).Ticks(4).Grid(2),
     },
 }
 c, err := chart.NewChart(opts)

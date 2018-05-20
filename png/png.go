@@ -2,15 +2,14 @@ package png
 
 import (
 	"fmt"
-	"image/color"
 	"io"
 
+	"github.com/fogleman/gg"
+	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/gofont/gomono"
 	"golang.org/x/image/font/gofont/gosmallcapsitalic"
 
-	"github.com/fogleman/gg"
-	"github.com/golang/freetype/truetype"
 	"github.com/tomarus/chart/data"
 	"github.com/tomarus/chart/format"
 	myimg "github.com/tomarus/chart/image"
@@ -131,26 +130,10 @@ func (png *PNG) Line(color string, x1, y1, x2, y2 int) {
 		png.gg.SetColor(png.pal.GetColor(color))
 		png.gg.Stroke()
 	} else {
-		png.line(ruler, x1, y1, x2, y2, 1)
-	}
-}
-
-func (png *PNG) line(color color.Color, x1, y1, x2, y2, skip int) {
-	png.gg.SetColor(color)
-	if x2 < x1 {
-		x1, x2 = x2, x1
-	}
-	if y2 < y1 {
-		y1, y2 = y2, y1
-	}
-	if x1 == x2 {
-		for i := y1; i < y2; i += skip {
-			png.gg.SetPixel(x1, i)
-		}
-	} else if y1 == y2 {
-		for i := x1; i < x2; i += skip {
-			png.gg.SetPixel(i, y1)
-		}
+		png.gg.SetLineWidth(1)
+		png.gg.DrawLine(float64(x1), float64(y1), float64(x2), float64(y2))
+		png.gg.SetColor(ruler)
+		png.gg.Stroke()
 	}
 }
 
