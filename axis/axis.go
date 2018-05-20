@@ -1,6 +1,7 @@
 package axis
 
 import (
+	"math"
 	"time"
 
 	"github.com/tomarus/chart/format"
@@ -103,7 +104,7 @@ func (a *Axis) Draw(img image.Image, w, h, mx, my int, min, max float64) {
 			t := int(a.duration / time.Second)
 			a.ticks = 1
 			if t > 0 {
-				a.ticks = int(max-min) / t
+				a.ticks = int(math.Round((max - min) / float64(t)))
 			}
 		}
 		if a.grid > 0 {
