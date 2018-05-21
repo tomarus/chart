@@ -4,8 +4,10 @@ package chart
 import (
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"sort"
+	"time"
 
 	"github.com/tomarus/chart/axis"
 	"github.com/tomarus/chart/data"
@@ -24,6 +26,7 @@ type Chart struct {
 	image            image.Image
 	writer           io.Writer
 	axes             []*axis.Axis
+	sibase           int
 }
 
 // Options defines a type used to initialize a Chart using NewChart()
@@ -36,7 +39,47 @@ type Options struct {
 	Start, End    int64       // start + end epoch of data
 	Image         image.Image // the chart image type, chart.SVG{} or chart.PNG{}
 	W             io.Writer   // output writer to write image to
+	SIBase        int         // SI Base for auto axis calculation, default is 1000.
 	Axes          []*axis.Axis
+}
+
+// formats define the separator length, the time format and the
+// number of subgrids. This is used if Options.Axis is not specified.
+// It aims to look nice globally but some formats might need to be
+// added in the future.
+var formats = []struct {
+	days int
+	dur  time.Duration
+	fmt  string
+	grid int
+}{
+	{0, 4 * time.Hour, "15:04", 4},
+	{3, 8 * time.Hour, "15:04", 4},
+	{7, 1 * 24 * time.Hour, "02 Jan", 4},
+	{14, 2 * 24 * time.Hour, "02 Jan", 2},
+	{30, 5 * 24 * time.Hour, "02-01", 5},
+	{60, 7 * 24 * time.Hour, "02-01", 2},
+	{180, 30 * 24 * time.Hour, "02-01", 4},
+	{365, 60 * 24 * time.Hour, "02-01-06", 4},
+	{365 * 2, 90 * 24 * time.Hour, "02-01-06", 3},
+}
+
+func (c *Chart) addAxes() {
+	days := int(math.Round(float64(c.end)-float64(c.start)) / 86400.0)
+	dur := 8 * time.Hour
+	ffmt := "Mon 15:04"
+	grid := 4
+	for _, f := range formats {
+		if days+1 >= f.days {
+			dur = f.dur
+			ffmt = f.fmt
+			grid = f.grid
+		}
+	}
+	c.axes = []*axis.Axis{
+		axis.NewTime(axis.Bottom, ffmt).Duration(dur).Grid(grid),
+		axis.NewSI(axis.Left, 1000).Ticks(4).Grid(2),
+	}
 }
 
 // Render renders the final image to the io.Writer.
@@ -49,6 +92,10 @@ func (c *Chart) Render() error {
 	}
 	c.data.Normalize(c.height)
 	sort.Sort(c.data)
+
+	if len(c.axes) == 0 {
+		c.addAxes()
+	}
 
 	for i := range c.data {
 		c.data[i].Scale = c.axes[1].Scales(c.height, 0, c.data[i].Max)
@@ -110,8 +157,11 @@ func NewChart(o *Options) (*Chart, error) {
 	if w == nil {
 		w = os.Stdout
 	}
-	c := &Chart{title: o.Title, marginx: 48, marginy: 20, image: o.Image, writer: w, data: data.Collection{}, axes: o.Axes}
+	c := &Chart{title: o.Title, marginx: 48, marginy: 20, image: o.Image, writer: w, data: data.Collection{}, axes: o.Axes, sibase: o.SIBase}
 
+	if c.sibase == 0 {
+		c.sibase = 1000
+	}
 	if o.Size == "big" {
 		c.width = 1440
 		c.height = 360
