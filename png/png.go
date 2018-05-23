@@ -144,7 +144,7 @@ func (png *PNG) rectFill(color string, x1, y1, w, h int) {
 }
 
 // Legend draws the image specific legend.
-func (png *PNG) Legend() {
+func (png *PNG) Legend(base float64) {
 	x := png.marginx
 	y := png.height + png.marginy + 4
 
@@ -157,9 +157,9 @@ func (png *PNG) Legend() {
 
 		min, max, avg := d.MinMaxAvg()
 		// FIXME use axis formatters for this.
-		mmax := format.SI(max, 1, 1000, "", "", "")
-		mmin := format.SI(min, 1, 1000, "", "", "")
-		mavg := format.SI(avg, 1, 1000, "", "", "")
+		mmax := format.SI(max, 1, base, "", "", "")
+		mmin := format.SI(min, 1, base, "", "", "")
+		mavg := format.SI(avg, 1, base, "", "", "")
 		q := fmt.Sprintf("%6s  %6s  %6s", mmin, mmax, mavg)
 		png.Text("title", "left", myimg.GridRole, x+20, y+26, d.Title)
 		png.Text("title", "right", myimg.GridRole, x+png.width, y+26, q)

@@ -112,7 +112,7 @@ func (c *Chart) Render() error {
 	c.axes[1].Draw(c.image, c.width, c.height, c.marginx, c.marginy, 0, c.data[0].Max)
 
 	c.drawTitle(c.width+c.marginx, c.height)
-	c.image.Legend()
+	c.image.Legend(float64(c.sibase))
 	c.image.Border(c.marginx-1, c.marginy-1, c.width+1, c.height+1)
 	return c.image.End()
 }

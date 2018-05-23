@@ -109,23 +109,23 @@ func (a *Axis) Draw(img image.Image, w, h, mx, my int, min, max float64) {
 		}
 		if a.grid > 0 {
 			t := a.ticks * a.grid
-			o := w / t
-			for dx := o; dx < w; dx += o {
+			o := float64(w) / float64(t)
+			for dx := o; dx < float64(w); dx += o {
 				col := "grid"
-				if dx/o%a.grid != 0 {
+				if int(dx/o)%a.grid != 0 {
 					col = "grid2"
 				}
-				img.Line(col, dx+mx+off, my, dx+mx+off, my+h)
+				img.Line(col, int(dx)+mx+off, my, int(dx)+mx+off, my+h)
 			}
 		}
 
-		toff := 0 // text offset
+		toff := 0. // text offset
 		if a.center {
-			toff = w / a.ticks / 2
+			toff = float64(w) / float64(a.ticks) / 2.
 		}
-		for dx := (w / a.ticks) - off; dx < w+toff; dx += w / a.ticks {
+		for dx := (float64(w) / float64(a.ticks)) - float64(off); dx < float64(w)+toff; dx += float64(w) / float64(a.ticks) {
 			str := a.format(min + ((max-min)/float64(w))*(float64(dx)-float64(toff)))
-			img.TextID("grid", col, "middle", image.GridRole, dx+mx+off-toff, my+h+14, str) // FIXME "14" (padding/offset)
+			img.TextID("grid", col, "middle", image.GridRole, int(dx)+mx+off-int(toff), my+h+14, str) // FIXME "14" (padding/offset)
 		}
 	case Left:
 		if a.grid > 0 {
