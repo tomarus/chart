@@ -62,9 +62,9 @@ opts := &chart.Options{
     Scheme: "white",   // or black/random/pink/solarized or hsl:180,0.5,0.25
     Start:  start_epoch,
     End:    end_epoch,
-	W:      w,
-	SIBase: 1000, // or use 1024 to scale, only used when axes are not specified.
-	// If you don't specify axes, they will be automatically calculated using some defaults.
+    W:      w,
+    SIBase: 1000, // or use 1024 to scale, only used when axes are not specified.
+    // If you don't specify axes, they will be automatically calculated using some defaults.
     Axes: []*axis.Axis{
         axis.NewTime(axis.Bottom, "Mon 15:04").Duration(8 * time.Hour).Grid(4),
         axis.NewSI(axis.Left, 1000).Ticks(4).Grid(2),
