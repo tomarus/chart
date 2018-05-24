@@ -39,8 +39,8 @@ type Image interface {
 	// only draw horizontal or vertical lines.
 	Line(color string, x1, y1, x2, y2 int)
 
-	// Legend draws the image specific legend.
-	Legend()
+	// Legend draws the legend in the image using base for SI formatting.
+	Legend(float64)
 
 	// Border draws a border around the chart area.
 	Border(x, y, w, h int)

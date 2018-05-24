@@ -143,7 +143,7 @@ func (svg *SVG) Line(color string, x1, y1, x2, y2 int) {
 }
 
 // Legend writes the legend buttons to the bottom.
-func (svg *SVG) Legend() {
+func (svg *SVG) Legend(base float64) {
 	x := svg.marginx
 	y := svg.height + svg.marginy + 4 + 16
 
@@ -158,9 +158,9 @@ func (svg *SVG) Legend() {
 
 		// FIXME use axis formatters for this.
 		min, max, avg := d.MinMaxAvg()
-		mmax := format.SI(max, 1, 1000, "", "", "")
-		mmin := format.SI(min, 1, 1000, "", "", "")
-		mavg := format.SI(avg, 1, 1000, "", "", "")
+		mmax := format.SI(max, 1, base, "", "", "")
+		mmin := format.SI(min, 1, base, "", "", "")
+		mavg := format.SI(avg, 1, base, "", "", "")
 		q := fmt.Sprintf("%6s  %6s  %6s", mmin, mmax, mavg)
 		svg.Text("title", "right", image.GridRole, x+svg.width, y+11, q)
 		svg.Line("grid2", x, y+11+3, x+svg.width, y+11+3)
