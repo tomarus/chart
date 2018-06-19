@@ -74,7 +74,7 @@ func (png *PNG) Graph() error {
 // face returns the font face to use. If the role is set to "title" a larger font is used.
 func (png *PNG) face(role myimg.TextRole) {
 	var ttfont *truetype.Font
-	size := 13.
+	size := 12.
 	dpi := 72.
 	h := font.HintingNone
 
@@ -90,7 +90,7 @@ func (png *PNG) face(role myimg.TextRole) {
 			panic(err)
 		}
 		ttfont = f
-		size = 16.
+		size = 15.
 	}
 
 	face := truetype.NewFace(ttfont, &truetype.Options{
