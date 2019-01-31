@@ -28,5 +28,8 @@ func SI(value float64, decimals int, k float64, s1, s2, s3 string) string {
 	var sizes = []string{s1, "K" + s2, "M" + s2, "G" + s2, "T" + s2, "P" + s2, "E" + s2}
 	i := math.Floor(math.Log(value) / math.Log(k))
 	f := fmt.Sprintf("%%.%df", decimals)
+	if math.IsNaN(i) {
+		i = 0
+	}
 	return fmt.Sprintf(f+s3+sizes[int(i)], value/math.Pow(k, i))
 }

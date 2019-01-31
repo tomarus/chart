@@ -11,6 +11,7 @@ var testFormat = []struct {
 	s1, s2, s3 string
 	expect     string
 }{
+	{-1, 1, 0, "xx", "x", "", "-1.0xx"},
 	{0, 2, 1000, "xx", "x", "", "0.00xx"},
 	{123, 2, 1000, "bytes", "b", " ", "123 bytes"},
 	{123, 2, 1000, "", "b", "", "123"},
